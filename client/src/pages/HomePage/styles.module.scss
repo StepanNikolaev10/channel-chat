@@ -1,0 +1,15 @@
+$main-text-color: white;
+$main-font: Arial, Helvetica, sans-serif;
+$markup-color: rgb(88, 87, 107);
+
+.main {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    min-height: 0;
+}
+
+.windows {
+    flex-grow: 1;
+}
+

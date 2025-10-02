@@ -1,0 +1,301 @@
+// Переменные
+$first-color: #363636;
+$second-color: white;
+$third-color: rgb(29, 155, 240);
+$third-color-hover: rgb(62, 164, 232);
+$font: Arial, Helvetica, sans-serif;
+
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@mixin flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+@mixin button-base {
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.container {
+    height: 100%;
+    width: 100%;
+    @include flex-column;
+    align-items: center;
+    position: relative;
+    padding: 30px;
+}
+
+.content {
+    width: 40%;
+    min-width: 300px;
+    position: relative;
+    flex: 1;
+    @include flex-column;
+}
+
+.title {
+    @include flex-center;
+    font-size: 24px;
+    font-weight: bold;
+    font-family: $font;
+    margin-bottom: 10px;
+}
+
+// Основные настройки
+.mainSettings {
+    width: 100%;
+    @include flex-column;
+    align-items: left;
+    border-bottom: 20px;
+}
+
+.setting {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.settingTitle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+    font-size: 20px;
+    font-family: $font;
+    user-select: none;
+}
+
+.tagListSettingTitle {
+    align-items: start;
+}
+
+.settingInput {
+    height: 35px;
+    width: 100%;
+    border: 1px solid rgb(136, 136, 136);
+    border-radius: 8px;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.15);
+    font-size: 20px;
+    padding: 0 12px;
+}
+
+.settingTypeSelector {
+    display: flex;
+}
+
+.settingTypeSelection {
+    height: 35px;
+    width: 60px;
+    display: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: $font;
+    padding: 6px;
+    border-radius: 10px;
+    margin-right: 5px;
+    color: $second-color;
+    user-select: none;
+    border: 0;
+}
+
+.selectedTypeSelection {
+    @include flex-center;
+}
+
+.openedTypeSelection {
+    background: #1EBC00;
+
+    &:hover {
+        background: #199600;
+    }
+}
+
+.closedTypeSelection {
+    background: #dc3545;
+
+    &:hover {
+        background: #bb2d3b;
+    }
+}
+
+.additionalSettings {
+    @include flex-column;
+}
+
+.additionalSettingsHeader {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.additionalSettingsTitle {
+    @include flex-center;
+    font-family: $font;
+    margin-right: 4px;
+    user-select: none;
+}
+
+.openAdditionalSettingsBtn {
+    @include flex-center;
+    cursor: pointer;
+
+    svg {
+        transition: transform 0.3s ease;
+    }
+
+    &.pressed svg {
+        transform: rotate(180deg);
+    }
+}
+
+.additionalSettingsMain {
+    @include flex-column;
+    visibility: hidden;
+}
+
+.opened {
+    visibility: visible;
+}
+
+.settingTagList {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.settingAddBtn {
+    height: 35px;
+    width: 60px;
+    box-sizing: content-box;
+    border-radius: 8px;
+    @include flex-center;
+    @include button-base;
+    background: $third-color;
+    color: $second-color;
+    font-family: $font;
+    font-size: 16px;
+
+    &:hover {
+        background: $third-color-hover;
+    }
+}
+
+.tag {
+    height: 35px;
+    position: relative;
+    @include flex-center;
+    padding: 0px 5px;
+    border: 2px solid $third-color;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    text-align: center;
+    font-family: $font;
+    margin-right: 5px;
+    margin-bottom: 5px;
+
+    &:hover {
+        background-color: $third-color-hover;
+        color: $second-color;
+
+        .tagName {
+            color: $second-color;
+        }
+
+        .deleteTagBtn {
+            transform: scale(1.1);
+
+            &::before,
+            &::after {
+                background-color: $second-color;
+                transition: background-color 0.2s ease-in-out;
+            }
+        }
+    }
+}
+
+.tagName {
+    color: $first-color;
+    font-size: 16px;
+    margin-right: 6px;
+}
+
+.deleteTagBtn {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 1.5px;
+        background-color: $first-color;
+        border-radius: 1px;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    &::before {
+        transform: translateY(-50%) rotate(45deg);
+    }
+
+    &::after {
+        transform: translateY(-50%) rotate(-45deg);
+    }
+}
+
+.errorMessage {
+    width: max-content;
+    position: absolute;
+    left: 50%;
+    bottom: 10%;
+    transform: translate(-50%, -10%);
+    padding: 4px 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    background: rgba(255, 0, 0, 0.3);
+    border-radius: 8px;
+    color: rgb(156, 4, 4);
+    font-family: $font;
+}
+
+// Блок с кнопками
+.actions {
+    width: 100%;
+    display: flex;
+}
+
+.actionContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+
+    & > button {
+        @include button-base;
+        background-color: $third-color;
+        font-family: $font;
+        width: 180px;
+        height: 70px;
+        font-size: 20px;
+        border-radius: 20px;
+        color: $second-color;
+        box-shadow: 4px 4px 18px 0px rgba(29, 155, 240, 0.2);
+
+        &:hover {
+            background-color: $third-color-hover;
+        }
+    }
+}

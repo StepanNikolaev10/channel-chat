@@ -1,0 +1,87 @@
+$first-color: #363636;
+$second-color: white;
+$third-color: rgb(29, 155, 240);
+$third-color-hover: rgb(82, 178, 243);
+$fivth-color: rgb(208, 40, 3);
+$fivth-color-hover: #e83e4f;
+$font: Arial, Helvetica, sans-serif;
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    background-color: $second-color;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px $first-color;
+    padding: 20px 30px;
+}
+
+.header {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid $first-color;
+    position: relative;
+
+    .title {
+        font-size: 20px;
+        font-weight: 600;
+        color: $first-color;
+        font-family: $font;
+    }
+}
+
+.main {
+    padding: 20px 0;
+
+    .password-input {
+        width: 100%;
+        padding: 8px 12px;
+        font-size: 16px;
+        border: 1px solid rgb(136, 136, 136);
+        border-radius: 8px;
+        box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.15);
+        font-family: $font;
+    }
+
+}
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 20px;
+    border-top: 1px solid $first-color;
+
+    .btnsContainer {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .cancelBtn,
+    .continueBtn {
+        font-size: 14px;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        border: 0;
+    }
+    
+    .cancelBtn {
+        color: $second-color;
+        background-color: $fivth-color;
+        &:hover {
+            background-color: $fivth-color-hover;
+        }
+    }
+    
+    .continueBtn {
+        color: $second-color;
+        background-color: $third-color;
+        border: none;
+        &:hover {
+            background-color: $third-color-hover;
+        }
+    }
+}

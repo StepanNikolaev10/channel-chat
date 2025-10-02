@@ -1,0 +1,89 @@
+import styles from './styles.module.scss';
+import ChannelPasswordModal from './ChannelPasswordModal/index.js'
+
+ChannelPasswordModal.define();
+
+class ClosedAccessWindow extends HTMLElement {
+    constructor() {
+        super();
+        this.eventListeners = [];
+    }
+
+    connectedCallback() {
+        this.setupStyles();
+        this.render();
+        this.attachEvents();
+    }
+
+    disconnectedCallback() {
+        this.removeEvents();
+    }
+
+    setupStyles() {
+        this.style.flexGrow = '1';
+    }
+
+    render() {
+        this.innerHTML = `
+            <div class="${styles.container}">
+                <div class="${styles.content}">
+                    <p class="${styles.title}">
+                        This is a closed channel. To join, you need to enter a password.
+                    </p>
+                </div>
+                <div class="${styles.actions}">
+                    <button class="${styles.button}" data-role="back-to-home">Back to home</button>
+                    <button class="${styles.button}" data-role="enter-password-btn">Enter password</button>
+                </div>
+            </div>
+            <channel-password-modal></channel-password-modal>
+        `;
+    }
+
+    attachEvents() {
+        // back to home btn 
+        const backToHomeBtn = this.querySelector('[data-role="back-to-home"]');
+        const backToHome = () => {
+            this.dispatchEvent(new CustomEvent('back-to-home', {
+                bubbles: true,
+                composed: true,
+            }));
+        }
+        this.addEvent(backToHomeBtn, 'click', backToHome);
+
+        // enter password btn
+        const enterPasswordBtn = this.querySelector('[data-role="enter-password-btn"]');
+        const enterPassword = () => {
+            const channelPasswordModal = this.querySelector('channel-password-modal');
+            channelPasswordModal.style.visibility = 'visible';
+        }
+        this.addEvent(enterPasswordBtn, 'click', enterPassword);
+
+        // channel password modal
+        const channelPasswordModal = this.querySelector('channel-password-modal');
+        const closeChannelPasswordModal = (event) => {
+                event.target.style.visibility = 'hidden';
+        }
+        this.addEvent(channelPasswordModal, 'close-channel-password-modal', closeChannelPasswordModal);
+    }
+
+    addEvent(element, eventType, handler) {
+        this.eventListeners.push({ element, eventType, handler });
+        element.addEventListener(eventType, handler);
+    }
+
+    removeEvents() {
+        for (const listener of this.eventListeners) {
+            listener.element.removeEventListener(listener.eventType, listener.handler);
+        }
+        this.eventListeners = [];
+    }
+
+    static define() {
+        if (!customElements.get('closed-access-window')) {
+            customElements.define('closed-access-window', ClosedAccessWindow);
+        }
+    }
+}
+
+export default ClosedAccessWindow;
