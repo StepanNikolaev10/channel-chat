@@ -14,10 +14,11 @@ class AuthController {
             const userData = await AuthService.signUp(username, password);
 
             res.cookie('refreshToken', userData.refreshToken, {
-                maxAge: 30 * 24 * 60 * 60 * 1000,
+                maxAge: 30 * 24 * 60 * 60 * 1000, 
                 httpOnly: true,
-                sameSite: 'Lax',
-                secure: process.env.NODE_ENV === 'production'
+                secure: true,
+                sameSite: 'None',
+                path: '/'
             });
 
             return res.status(200).json(userData);
@@ -35,8 +36,9 @@ class AuthController {
             res.cookie('refreshToken', userData.refreshToken, {
                 maxAge: 30 * 24 * 60 * 60 * 1000,
                 httpOnly: true,
-                sameSite: 'Lax',
-                secure: process.env.NODE_ENV === 'production'
+                secure: true,
+                sameSite: 'None',
+                path: '/'
             });
 
             return res.status(200).json(userData);
@@ -49,10 +51,16 @@ class AuthController {
     async logout(req, res, next) {
         try {
             const { refreshToken } = req.cookies;
-            const logoutResult = await AuthService.logout(refreshToken);
+            await AuthService.logout(refreshToken);
 
-            res.clearCookie('refreshToken');
-            return res.status(200).json(logoutResult);
+            res.clearCookie('refreshToken', {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'None',
+                path: '/'
+            });
+
+            return res.status(200).json({ success: true });
         } catch (e) {
             console.error(`AuthController.logout error: ${e.message}`);
             next(e);
@@ -67,8 +75,9 @@ class AuthController {
             res.cookie('refreshToken', userData.refreshToken, {
                 maxAge: 30 * 24 * 60 * 60 * 1000,
                 httpOnly: true,
-                sameSite: 'Lax',
-                secure: process.env.NODE_ENV === 'production'
+                secure: true,
+                sameSite: 'None',
+                path: '/'
             });
 
             return res.status(200).json(userData);
@@ -83,7 +92,6 @@ class AuthController {
             if (!req.user) {
                 return next(ApiError.Unauthorized('User not authenticated'));
             }
-
             return res.status(200).json({ user: req.user });
         } catch (e) {
             console.error(`AuthController.check error: ${e.message}`);
