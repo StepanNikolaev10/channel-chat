@@ -8,7 +8,7 @@ class WebSocketClient {
     connect() {
         return new Promise((resolve, reject) => {
             const token = localStorage.getItem('token');
-            this.socket = new WebSocket('ws://localhost:5000');
+            this.socket = new WebSocket('ws://https://channelchat-production.up.railway.app');
 
             this.socket.addEventListener('open', (event) => {
                 this.socket.send(JSON.stringify({ type: 'auth', token }));
