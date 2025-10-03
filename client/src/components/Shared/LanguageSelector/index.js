@@ -14,7 +14,7 @@ class LanguageSelector extends HTMLElement {
             <div class="${styles.container}">
                 <div class="${styles.title}">Language:</div>
                 <div class="${styles.flag}">
-                    <img class="${styles.flagImg}" src="../src/assets/united-states.svg" alt="united-states-flag" />
+                    <img class="${styles.flagImg}" src="./src/assets/united-states.svg" alt="united-states-flag" />
                 </div>
                 <button class="${styles.dropdownBtn}">
                     <div class="${styles.dropdownIcon}">
