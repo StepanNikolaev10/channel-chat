@@ -20,9 +20,13 @@ const apiLimiter = rateLimit({
 });
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: [
+        'http://localhost:5173',
+        'https://channel-chat-amber.vercel.app' 
+    ],
     credentials: true
 }));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api', apiLimiter);
