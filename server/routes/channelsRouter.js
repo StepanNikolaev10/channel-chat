@@ -28,29 +28,7 @@ channelsRouter.post(
     ChannelsController.createChannel
 );
 
-channelsRouter.put(
-    '/:id',
-    authMiddleware,
-    creatorRoleMiddleware,
-    // [
-    //     check('name')
-    //     .optional() 
-    //     .notEmpty().withMessage('Channel name cannot be empty')
-    //     .isLength({ min: 3, max: 30 }).withMessage('Channel name must be 3–30 characters long')
-    //     .matches(/^[a-zA-Z0-9_-]+$/).withMessage('Channel name can only contain letters, numbers, underscores, and dashes'),
-
-    //     check('description')
-    //     .optional()
-    //     .isLength({ max: 500 }).withMessage('Description must be less than 500 characters'),
-
-    //     check('password')
-    //     .optional() 
-    //     .isLength({ min: 4, max: 40 }).withMessage('Password must be 4–40 characters long')
-    //     .matches(/^[a-zA-Z0-9!@#$%^&*()_+={}\[\].,:;"'<>?/|\\\-~]+$/)
-    //     .withMessage('Password can only contain letters, numbers, and common symbols'),
-    // ],
-    ChannelsController.editChannel
-);
+channelsRouter.put('/:id', authMiddleware, creatorRoleMiddleware, ChannelsController.editChannel);
 channelsRouter.delete('/:id', authMiddleware, creatorRoleMiddleware, ChannelsController.deleteChannel);
 channelsRouter.get('/all', authMiddleware, ChannelsController.getAllChannels);
 channelsRouter.post('/searched', authMiddleware, ChannelsController.getSearchedChannels);
