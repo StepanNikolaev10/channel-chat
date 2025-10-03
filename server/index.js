@@ -7,7 +7,7 @@ import authRouter from './routes/authRouter.js';
 import userRouter from './routes/userRouter.js';
 import channelRouter from './routes/channelsRouter.js';
 import errorMiddleware from './middlewares/errorMiddleware.js';
-import { setupWebSocket } from '../server/websocket/index.js';
+import { setupWebSocket } from './websocket/index.js';
 
 const PORT = process.env.PORT || 5000;
 const app = express();
