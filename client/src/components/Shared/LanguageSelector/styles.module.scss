@@ -5,26 +5,13 @@ $hover-color: #363636;
 .container {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
     font-family: $font;
-}
-
-.title {
-    color: $text-color;
-    font-size: 20px;
-    margin-right: 10px;
 }
 
 .flag {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.flag-img {
-    display: block;
-    height: 40px;
-    width: auto;
 }
 
 .dropdown-btn {
@@ -37,7 +24,7 @@ $hover-color: #363636;
     align-items: center;
     padding: 0;
     cursor: pointer;
-
+    
     &:hover {
         background: white;
         border-radius: 50%;
@@ -54,5 +41,41 @@ $hover-color: #363636;
 
     &:hover {
         color: $hover-color;
+    }
+}
+
+@media (max-width: 768px) {
+    .flag svg {
+        height: 35px;
+        width: auto;
+    }
+
+    .dropdown-btn {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .flag svg {
+        height: 30px;
+        width: auto;
+    }
+
+    .dropdown-btn {
+        width: 26px;
+        height: 26px;
+    }
+}
+
+@media (max-width: 360px) {
+    .flag svg {
+        height: 25px;
+        width: auto;
+    }
+
+    .dropdown-btn {
+        width: 24px;
+        height: 24px;
     }
 }

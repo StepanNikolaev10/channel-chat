@@ -60,3 +60,80 @@ $font: Arial, Helvetica, sans-serif;
             background-color: $third-color-hover;
     }
 }
+
+@media (max-width: 768px) {
+    .greetingsContainer {
+        margin-bottom: 150px; // уменьшаем отступ
+    }
+
+    .greetings {
+        font-size: 24px; // уменьшаем заголовок
+    }
+
+    .title {
+        font-size: 20px;
+    }
+
+    .buttonsContainer {
+        gap: 30px; // уменьшаем расстояние между кнопками
+        flex-wrap: wrap; // перенос на новую строку, если не помещается
+        justify-content: center;
+    }
+
+    .signInButton,
+    .signUpButton {
+        width: 200px;   // уменьшаем ширину
+        height: 80px;   // уменьшаем высоту
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .greetingsContainer {
+        margin-bottom: 200px;
+    }
+
+    .greetings {
+        font-size: 26px;
+    }
+
+    .title {
+        font-size: 20px;
+    }
+
+    .buttonsContainer {
+        gap: 20px;
+    }
+
+    .signInButton,
+    .signUpButton {
+        width: 170px;
+        height: 70px;
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 360px) {
+    .greetingsContainer {
+        margin-bottom: 200px;
+    }
+
+    .greetings {
+        font-size: 26px;
+    }
+
+    .title {
+        font-size: 20px;
+    }
+
+    .buttonsContainer {
+        gap: 20px;
+    }
+
+    .signInButton,
+    .signUpButton {
+        width: 150px;
+        height: 80px;
+        font-size: 20px;
+    }
+}
