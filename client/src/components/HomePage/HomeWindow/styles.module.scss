@@ -32,8 +32,9 @@ $font: Arial, Helvetica, sans-serif;
     width: 100%;
     display: flex;
     justify-content: space-around;
-    padding: 20px;
+    padding-bottom: 20px;
 }
+
 
 .button {
     border: none;
@@ -51,5 +52,12 @@ $font: Arial, Helvetica, sans-serif;
         background-color: $third-color-hover;
     }
 }
-
+@media (max-width: 360px) {
+    .button {
+        width: 160px;
+        height: 70px;
+        font-size: 18px;
+        border-radius: 16px;
+    }
+}
 

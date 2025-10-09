@@ -11,7 +11,6 @@ $font: Arial, Helvetica, sans-serif;
     flex-direction: column;
     align-items: center;
     position: relative;
-    padding: 30px;
 }
 
 .content {
@@ -30,17 +29,18 @@ $font: Arial, Helvetica, sans-serif;
 }
 
 .actions {
+    width: 100%;
     display: flex;
     justify-content: space-around;
-    gap: 1rem;
-    width: 100%;
+    padding-bottom: 20px;
 }
 
 .button {
     border: none;
     background-color: $third-color;
     font-family: $font;
-    padding: 20px;
+    width: 180px;
+    height: 70px;
     font-size: 20px;
     border-radius: 20px;
     color: white;
@@ -49,5 +49,14 @@ $font: Arial, Helvetica, sans-serif;
 
     &:hover {
         background-color: $third-color-hover;
+    }
+}
+
+@media (max-width: 360px) {
+    .button {
+        width: 160px;
+        height: 70px;
+        font-size: 18px;
+        border-radius: 16px;
     }
 }

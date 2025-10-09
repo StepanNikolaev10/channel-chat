@@ -13,14 +13,14 @@ $font: Arial, Helvetica, sans-serif;
     background-color: $second-color;
     border-radius: 10px;
     box-shadow: 0 4px 15px $first-color;
-    padding: 20px 30px;
+    padding: 0px 30px;
 }
 
 .header {
     display: flex;
     justify-content: left;
     align-items: center;
-    padding-bottom: 20px;
+    padding: 20px;
     border-bottom: 1px solid $first-color;
     position: relative;
 
@@ -68,9 +68,8 @@ $font: Arial, Helvetica, sans-serif;
 .footer {
     display: flex;
     justify-content: flex-end;
-    padding-top: 20px;
     border-top: 1px solid $first-color;
-
+    padding: 20px;
     .btnsContainer {
         display: flex;
         gap: 10px;
@@ -101,5 +100,83 @@ $font: Arial, Helvetica, sans-serif;
         &:hover {
             background-color: $third-color-hover;
         }
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 0 0.8rem;
+    }
+
+    .header .title {
+        font-size: 20px;
+    }
+
+    .main .tagsList {
+        gap: 10px;
+    }
+
+    .main .tag {
+        font-size: 16px;
+        padding: 7px 2px;
+    }
+
+    .footer .cancelBtn,
+    .footer .saveBtn {
+        font-size: 16px;
+        padding: 10px 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        width: 90%;
+        padding: 0 0.8rem;
+    }
+
+    .header .title {
+        font-size: 20px;
+    }
+
+    .main .tagsList {
+        gap: 10px;
+    }
+
+    .main .tag {
+        font-size: 14px;
+        padding: 7px 2px;
+    }
+
+    .footer .cancelBtn,
+    .footer .saveBtn {
+        font-size: 16px;
+        padding: 10px 18px;
+    }
+}
+
+@media (max-width: 360px) {
+   .container {
+        width: 90%;
+        padding: 0 0.5rem;
+    }
+
+    .header .title {
+        font-size: 18px;
+    }
+
+    .main .tagsList {
+        gap: 5px;
+    }
+
+    .main .tag {
+        font-size: 14px;
+        padding: 7px 2px;
+    }
+
+    .footer .cancelBtn,
+    .footer .saveBtn {
+        font-size: 14px;
+        padding: 10px 16px;
     }
 }
