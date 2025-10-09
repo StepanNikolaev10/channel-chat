@@ -27,6 +27,7 @@ class ChatSideBar extends HTMLElement {
     setupStyles() {
         this.style.width = '300px';
         this.style.height = '100%';
+        this.style.zIndex = '1000';
     }
 
     render() {

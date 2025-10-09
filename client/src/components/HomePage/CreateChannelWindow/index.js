@@ -75,12 +75,8 @@ class CreateChannelWindow extends HTMLElement {
                     </div>
                 </div>
                 <div class="${styles.actions}">
-                    <div class="${styles.actionContainer}">
-                        <button class="${styles.backToHomeBtn}" data-role="back-to-home-btn" type="button">Back to home</button>
-                    </div>
-                    <div class="${styles.actionContainer}">
-                        <button class="${styles.createChannelBtn}" data-role="create-channel-btn" type="submit">Create</button>
-                    </div>
+                    <button class="${styles.button}" data-role="back-to-home-btn" type="button">Back to home</button>
+                    <button class="${styles.button}" data-role="create-channel-btn" type="submit">Create</button>
                 </div>
             </form>
             <tag-selector-modal></tag-selector-modal>

@@ -7,9 +7,15 @@ $markup-color: rgb(88, 87, 107);
     flex-direction: row;
     flex-grow: 1;
     min-height: 0;
+    position: relative;
 }
 
 .windows {
     flex-grow: 1;
 }
+
+home-side-bar.hidden {
+    display: none;
+}
+
 

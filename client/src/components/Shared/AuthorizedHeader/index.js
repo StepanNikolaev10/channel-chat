@@ -38,9 +38,36 @@ class AuthorizedHeader extends HTMLElement {
         `;
     }
 
-    addEvent(element, eventType, handler) {
-        this.eventListeners.push({ element, eventType, handler });
-        element.addEventListener(eventType, handler);
+    isMobile() {
+        return window.innerWidth <= 768; 
+    }
+
+    loadMobileContent() {
+        const sectionLeft = this.querySelector(`.${styles.sectionLeft}`);
+        if (!sectionLeft.querySelector(`.${styles.burger}`)) {
+            const toggleSideBarBtn = document.createElement('div');
+            toggleSideBarBtn.classList.add(styles.burger);
+            toggleSideBarBtn.dataset.role = 'toggle-side-bar-btn';
+            const span = document.createElement('span');
+            toggleSideBarBtn.append(span);
+            sectionLeft.append(toggleSideBarBtn);
+
+            const toggleSideBar = () => {
+                this.dispatchEvent(new CustomEvent('toggle-side-bar', {
+                    bubbles: true,
+                    composed: true
+                }));
+            }
+            this.addEvent(toggleSideBarBtn, 'click', toggleSideBar);
+        }
+    }
+
+    loadDesktopContent() {
+        const burger = this.querySelector(`.${styles.burger}`)
+        if(burger) {
+            this.removeEvent(burger);
+            burger.remove();
+        }
     }
 
     attachEvents() {
@@ -50,6 +77,12 @@ class AuthorizedHeader extends HTMLElement {
             Router.navigate('/')
         }
         this.addEvent(appName, 'click', backToLanding);
+
+    }
+
+    addEvent(element, eventType, handler) {
+        this.eventListeners.push({ element, eventType, handler });
+        element.addEventListener(eventType, handler);
     }
 
     removeEvents() {
@@ -58,6 +91,17 @@ class AuthorizedHeader extends HTMLElement {
         }
         this.eventListeners = [];
     }
+
+    removeEvent(element) {
+        this.eventListeners = this.eventListeners.filter(listener => {
+            if (listener.element === element) {
+                listener.element.removeEventListener(listener.eventType, listener.handler);
+                return false; 
+            }
+            return true;
+        });
+    }
+
 
     static define() {
         if (!customElements.get('authorized-header')) {

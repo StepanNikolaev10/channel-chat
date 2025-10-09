@@ -30,12 +30,8 @@ class HomeWindow extends HTMLElement {
                     </p>
                 </div>
                 <div class="${styles.actions}">
-                    <div class="${styles.actionContainer}">
-                        <button data-role="create-channel-btn">Create a channel</button>
-                    </div>
-                    <div class="${styles.actionContainer}">
-                        <button>Connect by id</button>
-                    </div>
+                    <button class="${styles.button}" data-role="create-channel-btn">Create a channel</button>
+                    <button class="${styles.button}" data-role="connect-by-id-btn">Connect by id</button>
                 </div>
             </div>
         `;

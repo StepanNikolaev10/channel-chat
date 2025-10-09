@@ -16,13 +16,21 @@ CreateChannelWindow.define();
 class HomePage extends HTMLElement {
     constructor() {
         super();
+        this.eventListeners = [];
     }
 
-    connectedCallback() {
+    async connectedCallback() {
         document.title = 'Home - Channel Chat'
         this.setupStyles();
         this.render();
-        this.setupEventListeners();
+        if(this.isMobile()) {
+            this.loadMobileContent();
+        }
+        this.attachEvents();
+    }
+
+    disconnectedCallback() {
+        this.removeEvents();
     }
 
     setupStyles() {
@@ -43,49 +51,90 @@ class HomePage extends HTMLElement {
         `;
     }
 
-    setupEventListeners() {
-        const channelMenu = this.querySelector('channels-list');
-        if (channelMenu) {
-            channelMenu.addEventListener('channel-selected', (event) => {
-                this.onChannelSelected(event.detail);
-            });
+    loadMobileContent() {
+        const authorizedHeader = this.querySelector('authorized-header');
+        authorizedHeader.loadMobileContent();
+        const homeSideBar = this.querySelector('home-side-bar');
+        homeSideBar.style.position = 'absolute';
+        if(!homeSideBar.classList.contains(styles.hidden)) {
+            homeSideBar.classList.add(styles.hidden)
         }
-        const homeHubSection = this.querySelector(`.${styles.windows}`);
-        if (homeHubSection) {
-            homeHubSection.addEventListener('back-to-home', () => {
-                this.resetHomeHub();
-            });
-            homeHubSection.addEventListener('create-channel', (event) => {
-                this.onCreateChannelMenu(event.detail)
-            });
+    }
+
+    isMobile() {
+        return window.innerWidth <= 768; 
+    }
+
+    attachEvents() {
+        // authorized header
+        const authorizedHeader = this.querySelector('authorized-header');
+        const toggleSideBar = () => {
+            const homeSideBar = this.querySelector('home-side-bar');
+            homeSideBar.classList.toggle(styles.hidden);
         }
-        
+        this.addEvent(authorizedHeader, 'toggle-side-bar', toggleSideBar);
+
+        // home side bar
+        const homeSideBar = this.querySelector('home-side-bar');
+        const openSelectedChannelAccessWindow = (event) => {
+            const windows = this.querySelector(`.${styles.windows}`);
+            const channel = event.detail;
+                windows.innerHTML = '';
+                const elementTag = channel.type === 'closed' ? 'closed-access-window' : 'opened-access-window';
+                const element = document.createElement(elementTag);
+                element.channel = channel;
+                windows.appendChild(element);
+                homeSideBar.classList.add(styles.hidden)
+            }
+        this.addEvent(homeSideBar, 'channel-selected', openSelectedChannelAccessWindow);
+
+        // windows
+        const windows = this.querySelector(`.${styles.windows}`);
+        const backToHomeWindow = () => {
+            windows.innerHTML = '<home-window></home-window>';
+        }
+        this.addEvent(windows, 'back-to-home', backToHomeWindow);
+
+        const openCreateChannelWindow = () => {
+            windows.innerHTML = '';
+            const elementTag = 'create-channel-window';
+            const element = document.createElement(elementTag);
+            windows.appendChild(element);
+        }
+        this.addEvent(windows, 'create-channel', openCreateChannelWindow);
+
+        // window
+        const resizeWindow = () => {
+            const homeSideBar = this.querySelector('home-side-bar');
+            if(this.isMobile()) {
+                authorizedHeader.loadMobileContent();
+                homeSideBar.style.position = 'absolute';
+                if(!homeSideBar.classList.contains(styles.hidden)) {
+                    homeSideBar.classList.add(styles.hidden)
+                }
+            } else {
+                authorizedHeader.loadDesktopContent();
+                homeSideBar.style.position = 'relative';
+                if(homeSideBar.classList.contains(styles.hidden)) {
+                    homeSideBar.classList.remove(styles.hidden)
+                }
+            }
+        }
+        this.addEvent(window, 'resize', resizeWindow);
     }
 
-    onChannelSelected(channel) {
-        const homeHubSection = this.querySelector(`.${styles.windows}`);
-        if (!homeHubSection) return;
-        homeHubSection.innerHTML = '';
-        const elementTag = channel.type === 'closed' ? 'closed-access-window' : 'opened-access-window';
-        const element = document.createElement(elementTag);
-        element.channel = channel;
-        homeHubSection.appendChild(element);
+    addEvent(element, eventType, handler) {
+        this.eventListeners.push({ element, eventType, handler });
+        element.addEventListener(eventType, handler);
     }
 
-    onCreateChannelMenu() {
-        const homeHubSection = this.querySelector(`.${styles.windows}`);
-        if (!homeHubSection) return;
-        homeHubSection.innerHTML = '';
-        const elementTag = 'create-channel-window';
-        const element = document.createElement(elementTag);
-        homeHubSection.appendChild(element);
+    removeEvents() {
+        for (const listener of this.eventListeners) {
+            listener.element.removeEventListener(listener.eventType, listener.handler);
+        }
+        this.eventListeners = [];
     }
 
-    resetHomeHub() {
-        const homeHubSection = this.querySelector(`.${styles.windows}`);
-        if (!homeHubSection) return;
-        homeHubSection.innerHTML = '<home-window></home-window>';
-    }
 
     static define() {
         if (!customElements.get('home-page')) {

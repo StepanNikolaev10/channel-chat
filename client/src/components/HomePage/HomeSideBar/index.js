@@ -22,8 +22,9 @@ class HomeSideBar extends HTMLElement {
     }
 
     setupStyles() {
-        this.style.minWidth = '300px';
+        this.style.width = '300px';
         this.style.height = '100%';
+        this.style.zIndex = '1000';
     }
 
     render() {
@@ -36,29 +37,34 @@ class HomeSideBar extends HTMLElement {
     }
 
     attachEvents() {
-        const contentContainer = this.querySelector(`.${styles.contentContainer}`);
         const channelsList = this.querySelector('channels-list');
         const searchMenu = this.querySelector('search-menu');
 
-        // content container events
+        // channels list
         const openSearchMenu = () => {
             channelsList.style.display = 'none';
             searchMenu.style.display = 'block';
         }
-        this.addEvent(contentContainer, 'open-search-menu', openSearchMenu);
+        this.addEvent(channelsList, 'open-search-menu', openSearchMenu);
 
+        const clearSearchSelectors = () => {
+            searchMenu.clearSearchSelectors();
+        }
+        this.addEvent(channelsList, 'clear-search-selectors', clearSearchSelectors);
+
+        // search menu
         const closeSearchMenu = () => {
             searchMenu.style.display = 'none';
             channelsList.style.display = 'block';
         }
-        this.addEvent(contentContainer, 'close-search-menu', closeSearchMenu);
+        this.addEvent(searchMenu, 'close-search-menu', closeSearchMenu);
 
         const emptySearchResponse = () => {
             channelsList.stopSearchMode();
             searchMenu.style.display = 'none';
             channelsList.style.display = 'block';
         }
-        this.addEvent(contentContainer, 'empty-search-response', emptySearchResponse);
+        this.addEvent(searchMenu, 'empty-search-response', emptySearchResponse);
 
         const searchResponse = (event) => {
             const { response, searchParamsCounter } = event.detail;
@@ -66,12 +72,7 @@ class HomeSideBar extends HTMLElement {
             searchMenu.style.display = 'none';
             channelsList.style.display = 'block';
         }
-        this.addEvent(contentContainer, 'search-response', searchResponse);
-
-        const clearSearchSelectors = () => {
-            searchMenu.clearSearchSelectors();
-        }
-        this.addEvent(contentContainer, 'clear-search-selectors', clearSearchSelectors);
+        this.addEvent(searchMenu, 'search-response', searchResponse);
     }
 
     addEvent(element, eventType, handler) {

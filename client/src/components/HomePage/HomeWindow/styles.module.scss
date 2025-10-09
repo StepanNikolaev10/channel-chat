@@ -11,7 +11,6 @@ $font: Arial, Helvetica, sans-serif;
     flex-direction: column;
     align-items: center;
     position: relative;
-    padding: 30px;
 }
 
 .content {
@@ -32,29 +31,25 @@ $font: Arial, Helvetica, sans-serif;
 .actions {
     width: 100%;
     display: flex;
+    justify-content: space-around;
+    padding: 20px;
 }
 
-.actionContainer {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    width: 100%;
+.button {
+    border: none;
+    background-color: $third-color;
+    font-family: $font;
+    width: 180px;
+    height: 70px;
+    font-size: 20px;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 4px 4px 18px 0px rgba(29, 155, 240, 0.2);
 
-    & > button {
-        border: none;
-        background-color: $third-color;
-        font-family: $font;
-        width: 180px;
-        height: 70px;
-        font-size: 20px;
-        border-radius: 20px;
-        color: white;
-        cursor: pointer;
-        box-shadow: 4px 4px 18px 0px rgba(29, 155, 240, 0.2);
-
-        &:hover {
-            background-color: $third-color-hover;
-        }
+    &:hover {
+        background-color: $third-color-hover;
     }
 }
+
+

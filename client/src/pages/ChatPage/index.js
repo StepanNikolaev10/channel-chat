@@ -20,6 +20,9 @@ class ChatPage extends HTMLElement {
     connectedCallback() {
         this.setupStyles();
         this.render();
+        if(this.isMobile()) {
+            this.loadMobileContent();
+        }
         this.attachEvents();
     }
 
@@ -46,11 +49,33 @@ class ChatPage extends HTMLElement {
         `;
     }
 
+    loadMobileContent() {
+        const authorizedHeader = this.querySelector('authorized-header');
+        authorizedHeader.loadMobileContent();
+        const chatSideBar = this.querySelector('chat-side-bar');
+        chatSideBar.style.position = 'absolute';
+        if(!chatSideBar.classList.contains(styles.hidden)) {
+            chatSideBar.classList.add(styles.hidden)
+        }
+    }
+
+    isMobile() {
+        return window.innerWidth <= 768; 
+    }
+
     attachEvents() {
+        // authorized header
+        const authorizedHeader = this.querySelector('authorized-header');
+        const toggleSideBar = () => {
+            const chatSideBar = this.querySelector('chat-side-bar');
+            chatSideBar.classList.toggle(styles.hidden);
+        }
+        this.addEvent(authorizedHeader, 'toggle-side-bar', toggleSideBar);
+
+        // chat side bar, tag selector modal
         const chatSideBar = this.querySelector('chat-side-bar');
         const tagSelectorModal = this.querySelector('tag-selector-modal');
-        
-        // chat side bar 
+        // chat side bar
         const openTagSelectorModal = (event) => {
             tagSelectorModal.syncSelectedTags(event.detail);
             tagSelectorModal.style.visibility = 'visible';
@@ -69,6 +94,24 @@ class ChatPage extends HTMLElement {
             tagSelectorModal.style.visibility = 'hidden';
         }
         this.addEvent(tagSelectorModal, 'close-tag-selector-modal',  closeTagSelectorModal);
+
+        // window
+        const resizeWindow = () => {
+            if(this.isMobile()) {
+                authorizedHeader.loadMobileContent();
+                chatSideBar.style.position = 'absolute';
+                if(!chatSideBar.classList.contains(styles.hidden)) {
+                    chatSideBar.classList.add(styles.hidden)
+                }
+            } else {
+                authorizedHeader.loadDesktopContent();
+                chatSideBar.style.position = 'relative';
+                if(chatSideBar.classList.contains(styles.hidden)) {
+                    chatSideBar.classList.remove(styles.hidden)
+                }
+            }
+        }
+        this.addEvent(window, 'resize', resizeWindow);
     }
 
     addEvent(element, eventType, handler) {
