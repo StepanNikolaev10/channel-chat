@@ -84,7 +84,9 @@ class HomePage extends HTMLElement {
                 const element = document.createElement(elementTag);
                 element.channel = channel;
                 windows.appendChild(element);
-                homeSideBar.classList.add(styles.hidden)
+                if(this.isMobile()) {
+                    homeSideBar.classList.add(styles.hidden)
+                }
             }
         this.addEvent(homeSideBar, 'channel-selected', openSelectedChannelAccessWindow);
 

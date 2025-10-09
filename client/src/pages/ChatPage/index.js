@@ -72,9 +72,10 @@ class ChatPage extends HTMLElement {
         }
         this.addEvent(authorizedHeader, 'toggle-side-bar', toggleSideBar);
 
-        // chat side bar, tag selector modal
+        // chat side bar/tag selector modal
         const chatSideBar = this.querySelector('chat-side-bar');
         const tagSelectorModal = this.querySelector('tag-selector-modal');
+        
         // chat side bar
         const openTagSelectorModal = (event) => {
             tagSelectorModal.syncSelectedTags(event.detail);
@@ -100,9 +101,6 @@ class ChatPage extends HTMLElement {
             if(this.isMobile()) {
                 authorizedHeader.loadMobileContent();
                 chatSideBar.style.position = 'absolute';
-                if(!chatSideBar.classList.contains(styles.hidden)) {
-                    chatSideBar.classList.add(styles.hidden)
-                }
             } else {
                 authorizedHeader.loadDesktopContent();
                 chatSideBar.style.position = 'relative';
