@@ -76,7 +76,7 @@ $font: Arial, Helvetica, sans-serif;
 }
 
 .settingInput {
-    height: 35px;
+    height: 40px;
     width: 100%;
     border: 1px solid rgb(136, 136, 136);
     border-radius: 8px;
@@ -90,13 +90,11 @@ $font: Arial, Helvetica, sans-serif;
 }
 
 .settingTypeSelection {
-    height: 35px;
-    width: 60px;
     display: none;
     cursor: pointer;
     font-size: 16px;
     font-family: $font;
-    padding: 6px;
+    padding: 8px 4px;
     border-radius: 10px;
     margin-right: 5px;
     color: $second-color;
@@ -169,8 +167,7 @@ $font: Arial, Helvetica, sans-serif;
 }
 
 .settingAddBtn {
-    height: 35px;
-    width: 60px;
+    padding: 8px 4px;
     box-sizing: content-box;
     border-radius: 8px;
     @include flex-center;
@@ -284,7 +281,7 @@ $font: Arial, Helvetica, sans-serif;
     font-family: $font;
     width: 180px;
     height: 70px;
-    font-size: 20px;
+    font-size: 18px;
     border-radius: 20px;
     color: white;
     cursor: pointer;
@@ -299,7 +296,6 @@ $font: Arial, Helvetica, sans-serif;
     .button {
         width: 160px;
         height: 70px;
-        font-size: 18px;
         border-radius: 16px;
     }
 }

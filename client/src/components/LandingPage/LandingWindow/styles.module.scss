@@ -33,6 +33,7 @@ $font: Arial, Helvetica, sans-serif;
 }
 
 .title {
+    padding: 10px;
     font-size: 24px;
     font-family: $font;
     color: $first-color;
@@ -43,15 +44,15 @@ $font: Arial, Helvetica, sans-serif;
     gap: 60px;
 }
 
-.signInButton,
-.signUpButton {
-    width: 270px;
-    height: 110px;
+.signInBtn,
+.signUpBtn {
+    width: 240px;
+    height: 100px;
     border: none;
     border-radius: 80px;
     background-color: $third-color;
     font-family: $font;
-    font-size: 36px;
+    font-size: 24px;
     color: $second-color;
     box-shadow: 4px 4px 18px rgba(29, 155, 240, 0.2);
     cursor: pointer;
@@ -63,11 +64,11 @@ $font: Arial, Helvetica, sans-serif;
 
 @media (max-width: 768px) {
     .greetingsContainer {
-        margin-bottom: 150px; // уменьшаем отступ
+        margin-bottom: 150px; 
     }
 
     .greetings {
-        font-size: 24px; // уменьшаем заголовок
+        font-size: 24px;
     }
 
     .title {
@@ -75,16 +76,16 @@ $font: Arial, Helvetica, sans-serif;
     }
 
     .buttonsContainer {
-        gap: 30px; // уменьшаем расстояние между кнопками
-        flex-wrap: wrap; // перенос на новую строку, если не помещается
+        gap: 30px; 
+        flex-wrap: wrap; 
         justify-content: center;
     }
 
-    .signInButton,
-    .signUpButton {
-        width: 200px;   // уменьшаем ширину
-        height: 80px;   // уменьшаем высоту
-        font-size: 28px;
+    .signInBtn,
+    .signUpBtn {
+        width: 200px;
+        height: 80px;  
+        font-size: 24px;
     }
 }
 
@@ -105,8 +106,8 @@ $font: Arial, Helvetica, sans-serif;
         gap: 20px;
     }
 
-    .signInButton,
-    .signUpButton {
+    .signInBtn,
+    .signUpBtn {
         width: 170px;
         height: 70px;
         font-size: 20px;
@@ -130,8 +131,8 @@ $font: Arial, Helvetica, sans-serif;
         gap: 20px;
     }
 
-    .signInButton,
-    .signUpButton {
+    .signInBtn,
+    .signUpBtn {
         width: 150px;
         height: 80px;
         font-size: 20px;

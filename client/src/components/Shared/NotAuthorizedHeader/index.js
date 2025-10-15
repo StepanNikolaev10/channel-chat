@@ -33,11 +33,6 @@ class NotAuthorizedHeader extends HTMLElement {
         `;
     }
 
-    addEvent(element, eventType, handler) {
-        this.eventListeners.push({ element, eventType, handler });
-        element.addEventListener(eventType, handler);
-    }
-
     attachEvents() {
         // app name
         const appName = this.querySelector('[data-role="app-name"]');
@@ -45,6 +40,11 @@ class NotAuthorizedHeader extends HTMLElement {
             Router.navigate('/')
         }
         this.addEvent(appName, 'click', backToLanding);
+    }
+
+    addEvent(element, eventType, handler) {
+        this.eventListeners.push({ element, eventType, handler });
+        element.addEventListener(eventType, handler);
     }
 
     removeEvents() {

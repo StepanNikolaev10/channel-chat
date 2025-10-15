@@ -1,20 +1,27 @@
 import styles from './styles.module.scss';
+import LangState from '../../../state/LangState';
 
 class HomeWindow extends HTMLElement {
     
     constructor() {
         super();
         this.eventListeners = [];
+        this.langUnsubscribe = null;
     }
 
     connectedCallback() {
         this.setupStyles();
         this.render();
         this.attachEvents();
+        this.langUnsubscribe = LangState.subscribe((newLang) => {
+            this.updateLanguage(newLang);
+        });
+        this.updateLanguage(LangState.language);
     }
 
     disconnectedCallback() {
         this.removeEvents();
+        if (this.langUnsubscribe) this.langUnsubscribe();
     }
 
     setupStyles() {
@@ -35,6 +42,22 @@ class HomeWindow extends HTMLElement {
                 </div>
             </div>
         `;
+    }
+
+    updateLanguage(lang) {
+        const title = this.querySelector(`.${styles.title}`);
+        const createChannelBtn = this.querySelector('[data-role="create-channel-btn"]');
+        const connectByIdBtn = this.querySelector('[data-role="connect-by-id-btn"]');
+
+        if (lang === 'en') {
+            title.textContent = 'Here you can connect or create a channel for communication.';
+            createChannelBtn.textContent = 'Create a channel';
+            connectByIdBtn.textContent = 'Connect by id';
+        } else if (lang === 'ru') {
+            title.textContent = 'Тут можно подключиться или создать канал для общения.';
+            createChannelBtn.textContent = 'Создать канал';
+            connectByIdBtn.textContent = 'Подключиться по id';
+        }
     }
 
     attachEvents() {

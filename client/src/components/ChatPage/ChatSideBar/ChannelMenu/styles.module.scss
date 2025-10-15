@@ -109,11 +109,11 @@ $font: Arial, Helvetica, sans-serif;
             background: #262626;
     }
 
-    svg {
+    img {
         transition: transform 0.3s ease;
     }
 
-    &.pressed svg {
+    &.pressed img {
         transform: rotate(180deg);
     }
 

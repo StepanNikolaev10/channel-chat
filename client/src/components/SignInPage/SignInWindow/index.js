@@ -3,21 +3,28 @@ import Router from '../../../Router/index.js';
 import AuthService from '../../../services/AuthService.js';
 import AuthState from '../../../state/AuthState.js';
 import UserState from '../../../state/UserState.js';
+import LangState from '../../../state/LangState.js';
 
 class SignInWindow extends HTMLElement {
     constructor() {
         super();
         this.eventListeners = [];
+        this.langUnsubscribe = null;
     }
 
     connectedCallback() {
         this.setupStyles();
         this.render();
         this.attachEvents();
+        this.langUnsubscribe = LangState.subscribe((newLang) => {
+            this.updateLanguage(newLang);
+        });
+        this.updateLanguage(LangState.language);
     }
 
     disconnectedCallback() {
         this.removeEvents();
+        if (this.langUnsubscribe) this.langUnsubscribe();
     }
 
     setupStyles() {
@@ -35,10 +42,11 @@ class SignInWindow extends HTMLElement {
                             <input class="${styles.input}" data-role="username-input" type="text" data-required="true" placeholder="Username" autocomplete="username"></input>
                             <input class="${styles.input}" data-role="password-input" type="password" data-required="true" placeholder="Password" autocomplete="password"></input>
                         </div>
-                        <div class="${styles.formActions}" data-role="sign-in-btn">
+                        <div class="${styles.formActions}">
                             <button class="${styles.signInBtn}" data-role="sign-in-btn" type="submit">Sign in</button>
-                            <div class="${styles.signUpLinkText}">
-                                Not signed up yet?<a class="${styles.signUpLink}" data-role="sign-up-link">Sign up</a>
+                            <div class="${styles.linkContainer}">
+                                <span class="${styles.signUpLinkText}">Not signed up yet?</span>
+                                <a class="${styles.signUpLink}" data-role="sign-up-link">Sign up</a>
                             </div>
                         </div>
                     </form>
@@ -47,9 +55,29 @@ class SignInWindow extends HTMLElement {
         `;
     }
 
-    addEvent(element, eventType, handler) {
-        this.eventListeners.push({ element, eventType, handler });
-        element.addEventListener(eventType, handler);
+    updateLanguage(lang) {
+        const title = this.querySelector(`.${styles.title}`);
+        const usernameInput = this.querySelector('[data-role="username-input"]');
+        const passwordInput = this.querySelector('[data-role="password-input"]');
+        const signInBtn = this.querySelector('[data-role="sign-in-btn"]');
+        const signUpLinkText = this.querySelector(`.${styles.signUpLinkText}`);
+        const signUpLink = this.querySelector('[data-role="sign-up-link"]');
+
+        if (lang === 'en') {
+            title.textContent = 'Sign in to Channel Chat';
+            usernameInput.placeholder = 'Username';
+            passwordInput.placeholder = 'Password';
+            signInBtn.textContent = 'Sign in';
+            signUpLinkText.textContent = 'Not signed up yet?';
+            signUpLink.textContent = 'Sign up';
+        } else if (lang === 'ru') {
+            title.textContent = 'Вход в приложение';
+            usernameInput.placeholder = 'Юзернейм';
+            passwordInput.placeholder = 'Пароль';
+            signInBtn.textContent = 'Войти';
+            signUpLinkText.textContent = 'Ещё не зарегестрированы?';
+            signUpLink.textContent = 'Регистрация';
+        }
     }
 
     attachEvents() {
@@ -79,6 +107,11 @@ class SignInWindow extends HTMLElement {
             }
         }
         this.addEvent(form, 'submit', formHandler);
+    }
+
+    addEvent(element, eventType, handler) {
+        this.eventListeners.push({ element, eventType, handler });
+        element.addEventListener(eventType, handler);
     }
 
     removeEvents() {

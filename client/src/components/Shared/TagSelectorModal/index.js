@@ -1,21 +1,28 @@
 import styles from './styles.module.scss';
+import LangState from '../../../state/LangState';
 
 class TagSelectorModal extends HTMLElement {
 
     constructor() {
         super();
-        this.selectedTags = [];
         this.eventListeners = []; 
+        this.langUnsubscribe = null;
+        this.selectedTags = [];
     }
 
     connectedCallback() {
         this.setupStyles();
         this.render();
         this.attachEvents();
+        this.langUnsubscribe = LangState.subscribe((newLang) => {
+            this.updateLanguage(newLang);
+        });
+        this.updateLanguage(LangState.language);
     }
 
     disconnectedCallback() {
         this.removeEvents();
+        if (this.langUnsubscribe) this.langUnsubscribe();
     }
 
     setupStyles() {
@@ -73,17 +80,56 @@ class TagSelectorModal extends HTMLElement {
         `;
     }
 
+    updateLanguage(lang) {
+        const title = this.querySelector(`.${styles.title}`);
+        const cancelBtn = this.querySelector('[data-role="cancel-btn"]');
+        const saveBtn = this.querySelector('[data-role="save-btn"]');
+        const tags = Array.from(this.querySelectorAll(`.${styles.tag}`));
+
+        if (lang === 'en') {
+            title.textContent = 'Select tags';
+            cancelBtn.textContent = 'Cancel';
+            saveBtn.textContent = 'Save';
+
+            const tagTranslations = {
+                Chatting: 'Chatting', Gaming: 'Gaming', Technology: 'Technology',
+                Music: 'Music', Movies: 'Movies', Books: 'Books',
+                Sports: 'Sports', Education: 'Education', Hobbies: 'Hobbies',
+                Travel: 'Travel', Art: 'Art', Work: 'Work',
+                Programming: 'Programming', Fitness: 'Fitness', Humor: 'Humor',
+                Cooking: 'Cooking', News: 'News', Esports: 'Esports',
+                Podcasts: 'Podcasts', Friends: 'Friends'
+            };
+            tags.forEach(tag => tag.textContent = tagTranslations[tag.dataset.tagType]);
+        } 
+        else if (lang === 'ru') {
+            title.textContent = 'Выберите теги';
+            cancelBtn.textContent = 'Отмена';
+            saveBtn.textContent = 'Сохранить';
+
+            const tagTranslations = {
+                Chatting: 'Общение', Gaming: 'Игры', Technology: 'Технологии',
+                Music: 'Музыка', Movies: 'Фильмы', Books: 'Книги',
+                Sports: 'Спорт', Education: 'Образование', Hobbies: 'Хобби',
+                Travel: 'Путешествия', Art: 'Искусство', Work: 'Работа',
+                Programming: 'Кодинг', Fitness: 'Фитнес', Humor: 'Юмор',
+                Cooking: 'Готовка', News: 'Новости', Esports: 'Киберспорт',
+                Podcasts: 'Подкасты', Friends: 'Друзья'
+            };
+            tags.forEach(tag => tag.textContent = tagTranslations[tag.dataset.tagType]);
+        }
+    }
+
     addEvent(element, eventType, handler) {
         this.eventListeners.push({ element, eventType, handler });
         element.addEventListener(eventType, handler);
     }
 
     attachEvents() {
-        // tag buttons
         const tags = Array.from(this.querySelectorAll(`.${styles.tag}`));
-        for(const tag of tags) {
+        for (const tag of tags) {
             const handler = () => {
-                if(!this.selectedTags.includes(tag.dataset.tagType)) {
+                if (!this.selectedTags.includes(tag.dataset.tagType)) {
                     this.selectedTags.push(tag.dataset.tagType);
                     tag.classList.add(styles.selected);
                 } else {
@@ -91,29 +137,27 @@ class TagSelectorModal extends HTMLElement {
                     this.selectedTags.splice(indexToRemove, 1);
                     tag.classList.remove(styles.selected);
                 }
-            }
+            };
             this.addEvent(tag, 'click', handler);
         }
 
-        // cancel button
         const cancelBtn = this.querySelector('[data-role="cancel-btn"]');
         const cancelBtnHandler = () => {
             this.dispatchEvent(new CustomEvent('close-tag-selector-modal', {
                 bubbles: true,
                 composed: true
             }));
-        }
+        };
         this.addEvent(cancelBtn, 'click', cancelBtnHandler);
 
-        // save button
         const saveBtn = this.querySelector('[data-role="save-btn"]');
         const saveBtnHandler = () => {
             this.dispatchEvent(new CustomEvent('save-tags', {
-                detail: { tags: this.selectedTags} ,
+                detail: { tags: this.selectedTags },
                 bubbles: true,
                 composed: true
             }));
-        }
+        };
         this.addEvent(saveBtn, 'click', saveBtnHandler);
     }
 
@@ -127,8 +171,8 @@ class TagSelectorModal extends HTMLElement {
     syncSelectedTags(selectedTags) {
         this.selectedTags = selectedTags;
         const tags = Array.from(this.querySelectorAll(`.${styles.tag}`));
-        for(const tag of tags) {
-            if(this.selectedTags.includes(tag.dataset.tagType)) {
+        for (const tag of tags) {
+            if (this.selectedTags.includes(tag.dataset.tagType)) {
                 tag.classList.add(styles.selected);
             } else {
                 tag.classList.remove(styles.selected);
@@ -141,7 +185,6 @@ class TagSelectorModal extends HTMLElement {
             customElements.define('tag-selector-modal', TagSelectorModal);
         }
     }
-    
 }
 
 export default TagSelectorModal;

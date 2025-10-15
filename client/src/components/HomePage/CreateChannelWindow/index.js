@@ -4,6 +4,7 @@ import UserState from '../../../state/UserState.js';
 import Router from '../../../Router/index.js';
 import WebSocketService from '../../../services/WebSocketService.js';
 import TagSelectorModal from '../../Shared/TagSelectorModal/index.js';
+import LangState from '../../../state/LangState';
 
 TagSelectorModal.define();
 
@@ -12,6 +13,7 @@ class CreateChannelWindow extends HTMLElement {
     constructor() {
         super();
         this.eventListeners = [];
+        this.langUnsubscribe = null;
         this.selectedChannelType = 'opened';
         this.selectedTags = [];
         this.additionalSettingsState = 'closed';
@@ -21,10 +23,15 @@ class CreateChannelWindow extends HTMLElement {
         this.setupStyles();
         this.render();
         this.attachEvents();
+        this.langUnsubscribe = LangState.subscribe((newLang) => {
+            this.updateLanguage(newLang);
+        });
+        this.updateLanguage(LangState.language);
     }
 
     disconnectedCallback() {
         this.removeEvents();
+        if (this.langUnsubscribe) this.langUnsubscribe();
     }
 
     setupStyles() {
@@ -81,6 +88,49 @@ class CreateChannelWindow extends HTMLElement {
             </form>
             <tag-selector-modal></tag-selector-modal>
         `;
+    }
+
+    updateLanguage(lang) {
+        const title = this.querySelector(`.${styles.title}`);
+        const nameInput = this.querySelector('[data-role="channel-name-input"]');
+        const passwordInput = this.querySelector('[data-role="password-input"]');
+        const typeTitle = this.querySelector(`.${styles.settingTitle}`);
+        const publicBtn = this.querySelector(`[data-role="public"]`);
+        const closedBtn = this.querySelector(`[data-role="closed"]`);
+        const additionalTitle = this.querySelector(`.${styles.additionalSettingsTitle}`);
+        const descriptionInput = this.querySelector('[data-role="description-input"]');
+        const tagsTitle = this.querySelector(`.${styles.tagListSettingTitle}`);
+        const addBtn = this.querySelector('[data-role="add-tags-btn"]');
+        const backBtn = this.querySelector('[data-role="back-to-home-btn"]');
+        const createBtn = this.querySelector('[data-role="create-channel-btn"]');
+
+        if (lang === 'en') {
+            title.textContent = 'Set up your channel';
+            nameInput.placeholder = 'Name';
+            typeTitle.textContent = 'Type:';
+            publicBtn.textContent = 'Public';
+            closedBtn.textContent = 'Closed';
+            passwordInput.placeholder = 'Password';
+            additionalTitle.textContent = 'Additional settings';
+            descriptionInput.placeholder = 'Description';
+            tagsTitle.textContent = 'Tags:';
+            addBtn.textContent = 'Add';
+            backBtn.textContent = 'Back to home';
+            createBtn.textContent = 'Create';
+        } else if (lang === 'ru') {
+            title.textContent = 'Настройте свой канал';
+            nameInput.placeholder = 'Название';
+            typeTitle.textContent = 'Тип:';
+            publicBtn.textContent = 'Открытый';
+            closedBtn.textContent = 'Закрытый';
+            passwordInput.placeholder = 'Пароль';
+            additionalTitle.textContent = 'Дополнительные настройки';
+            descriptionInput.placeholder = 'Описание';
+            tagsTitle.textContent = 'Теги:';
+            addBtn.textContent = 'Добавить';
+            backBtn.textContent = 'Назад на главную';
+            createBtn.textContent = 'Создать';
+        }
     }
 
     attachEvents() {

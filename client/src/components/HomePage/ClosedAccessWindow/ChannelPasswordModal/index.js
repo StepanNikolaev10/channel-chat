@@ -3,21 +3,28 @@ import ChannelsService from '../../../../services/ChannelsService.js';
 import Router from '../../../../Router/index.js';
 import UserState from '../../../../state/UserState.js';
 import WebSocketService from '../../../../services/WebSocketService.js';
+import LangState from '../../../../state/LangState.js';
 
 class ChannelPasswordModal extends HTMLElement {
     constructor() {
         super();
         this.eventListeners = [];
+        this.langUnsubscribe = null;
     }
 
     connectedCallback() {
         this.setupStyles();
         this.render();
         this.attachEvents();
+        this.langUnsubscribe = LangState.subscribe((newLang) => {
+            this.updateLanguage(newLang);
+        });
+        this.updateLanguage(LangState.language);
     }
 
     disconnectedCallback() {
         this.removeEvents();
+        if (this.langUnsubscribe) this.langUnsubscribe();
     }
 
     setupStyles() {
@@ -47,25 +54,42 @@ class ChannelPasswordModal extends HTMLElement {
                 <div class="${styles.footer}">
                     <div class="${styles.btnsContainer}">
                         <button class="${styles.cancelBtn}" type="button" data-role="cancel-btn">Cancel</button>
-                        <button class="${styles.continueBtn}" type="submit" data-role="continue-btn">Сontinue</button>
+                        <button class="${styles.continueBtn}" type="submit" data-role="continue-btn">Continue</button>
                     </div>
                 </div>
             </form>
         `;
     }
 
+    updateLanguage(lang) {
+        const title = this.querySelector(`.${styles.title}`);
+        const passwordInput = this.querySelector('[data-role="password-input"]');
+        const cancelBtn = this.querySelector('[data-role="cancel-btn"]');
+        const continueBtn = this.querySelector('[data-role="continue-btn"]');
+
+        if (lang === 'en') {
+            title.textContent = 'Enter password';
+            passwordInput.placeholder = 'Password';
+            cancelBtn.textContent = 'Cancel';
+            continueBtn.textContent = 'Continue';
+        } else if (lang === 'ru') {
+            title.textContent = 'Введите пароль';
+            passwordInput.placeholder = 'Пароль';
+            cancelBtn.textContent = 'Отмена';
+            continueBtn.textContent = 'Продолжить';
+        }
+    }
+
     attachEvents() {
-        // cancel btn 
         const cancelBtn = this.querySelector('[data-role="cancel-btn"]');
         const closePasswordModal = () => {
             this.dispatchEvent(new CustomEvent('close-channel-password-modal', {
                 bubbles: true,
                 composed: true
             }));
-        }
+        };
         this.addEvent(cancelBtn, 'click', closePasswordModal);
 
-        // form
         const form = this.querySelector('[data-role="form"]');
         const submitForm = async (event) => {
             event.preventDefault();
@@ -79,14 +103,12 @@ class ChannelPasswordModal extends HTMLElement {
                 await ChannelsService.joinChannel({ id, type: 'closed', password: enteredPassword });
                 UserState.connectedChannelInfo.channelId = id; 
                 UserState.connectedChannelInfo.channelName = name;
-                // важно что бы данные канала в UserState обновился перед рендером
-                // что бы компонент мог получить необходимую информацию о канале из его id.
                 await WebSocketService.connectToSocket(id);
                 Router.init();
             } catch(e) {
                 console.error('Failed to join channel:', e);
             }
-        }
+        };
         this.addEvent(form, 'submit', submitForm);
     }
 

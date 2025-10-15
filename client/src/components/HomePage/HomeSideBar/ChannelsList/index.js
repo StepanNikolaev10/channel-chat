@@ -1,10 +1,12 @@
 import styles from './styles.module.scss';
 import ChannelsService from '../../../../services/ChannelsService.js';
+import LangState from '../../../../state/LangState.js';
 
 class ChannelsList extends HTMLElement {
     constructor() {
         super();
         this.eventListeners = [];
+        this.langUnsubscribe = null;
         this.channels = [];
     }
 
@@ -16,6 +18,7 @@ class ChannelsList extends HTMLElement {
 
     disconnectedCallback() {
         this.removeEvents();
+        if (this.langUnsubscribe) this.langUnsubscribe();
     }
 
     setupStyles() {
@@ -25,7 +28,7 @@ class ChannelsList extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <section class="${styles.container}">
+            <div class="${styles.container}">
                 <div class="${styles.menu}">
                     <div class="${styles.title}">Channels</div>
                     <div class="${styles.actions}">
@@ -50,7 +53,7 @@ class ChannelsList extends HTMLElement {
                         <div class="${styles.searchParamsCounter}" data-role="search-params-counter"></div>
                     </div>
                 </div>
-            </section>
+            </div>
         `;
     }
 
@@ -58,8 +61,39 @@ class ChannelsList extends HTMLElement {
         try {
             await this.updateChannels();
             this.attachEvents();
+            this.langUnsubscribe = LangState.subscribe((newLang) => {
+                this.updateLanguage(newLang);
+            });
+            this.updateLanguage(LangState.language);
         } catch (e) {
             console.error('Channels list initialization failed:', e);
+        }
+    }
+
+    updateLanguage(lang) {
+        const title = this.querySelector(`.${styles.title}`);
+        const closedChannels = this.querySelectorAll(`.${styles.closedChannel}`);
+        const openedChannels = this.querySelectorAll(`.${styles.openedChannel}`);
+        const searchBtn = this.querySelector('[data-role="search-btn"]');
+
+        if (lang === 'en') {
+            title.textContent = 'Channels';
+            searchBtn.textContent = 'Search';
+            closedChannels.forEach(closedChannel => {
+                closedChannel.textContent = 'Closed';
+            });
+            openedChannels.forEach(openedChannel => {
+                openedChannel.textContent = 'Opened';
+            });
+        } else if (lang === 'ru') {
+            title.textContent = 'Каналы';
+            closedChannels.forEach(closedChannel => {
+                closedChannel.textContent = 'Закрытый';
+            });
+            openedChannels.forEach(openedChannel => {
+                openedChannel.textContent = 'Открытый';
+            });
+            searchBtn.textContent = 'Найти';
         }
     }
 
@@ -175,6 +209,7 @@ class ChannelsList extends HTMLElement {
 
     startSearchMode(channels, searchParamsCounter) {
         this.renderChannels(channels);
+        this.updateLanguage(LangState.language);
 
         const btnContainer = this.querySelector('[data-role="btn-container"]');
         if(!btnContainer.querySelector(`.${styles.stopSearchBtn}`)) {

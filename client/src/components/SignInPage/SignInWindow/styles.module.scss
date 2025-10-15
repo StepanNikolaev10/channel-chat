@@ -78,9 +78,16 @@ $font: Arial, Helvetica, sans-serif;
     }
 }
 
+.linkContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
 .signUpLinkText {
     display: flex;
     justify-content: center;
+    align-items: center;
     font-family: $font;
 }
 
@@ -92,6 +99,8 @@ $font: Arial, Helvetica, sans-serif;
     cursor: pointer;
     font-family: inherit;
     user-select: none;
+    font-size: 18px;
+    font: $font;
 
     &:hover {
         color: darkblue;
@@ -142,7 +151,7 @@ $font: Arial, Helvetica, sans-serif;
 
 @media (max-width: 768px) {
     .content {
-        width: 18rem;
+        width: 20rem;
         padding: 25px 0;
     }
 
@@ -157,6 +166,10 @@ $font: Arial, Helvetica, sans-serif;
 
     .signInBtn {
         height: 36px;
+        font-size: 16px;
+    }
+
+    .signUpLinkText {
         font-size: 16px;
     }
 }
@@ -181,14 +194,11 @@ $font: Arial, Helvetica, sans-serif;
         font-size: 16px;
     }
 
-    .signUpLinkText {
-        font-size: 16px;
-    }
 }
 
 @media (max-width: 360px) {
     .content {
-        width: 92%;
+        width: 90%;
         padding: 15px 0;
     }
 

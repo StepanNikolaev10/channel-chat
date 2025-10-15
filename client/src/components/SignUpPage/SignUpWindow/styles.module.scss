@@ -58,7 +58,7 @@ $font: Arial, Helvetica, sans-serif;
     flex-direction: column;
 }
 
-.signUpBtn {
+.signInBtn {
     height: 40px;
     display: flex;
     justify-content: center;
@@ -78,9 +78,16 @@ $font: Arial, Helvetica, sans-serif;
     }
 }
 
+.linkContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
 .signInLinkText {
     display: flex;
     justify-content: center;
+    align-items: center;
     font-family: $font;
 }
 
@@ -92,6 +99,8 @@ $font: Arial, Helvetica, sans-serif;
     cursor: pointer;
     font-family: inherit;
     user-select: none;
+    font-size: 18px;
+    font: $font;
 
     &:hover {
         color: darkblue;

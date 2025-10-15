@@ -1,0 +1,11 @@
+<svg viewBox="0 0 40 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="24.000000" fill="none" clip-path="url(#clipPath_0)" customFrame="url(#clipPath_0)">
+    <defs>
+        <clipPath id="clipPath_0">
+            <rect width="40.000000" height="24.000000" x="0.000000" y="0.000000" rx="2.000000" fill="rgb(255,255,255)" />
+        </clipPath>
+    </defs>
+    <rect id="rf-flag 1" width="40.000000" height="24.000000" x="0.000000" y="0.000000" rx="2.000000" />
+    <path id="Форма 1" d="M0 0L40 0L40 8L0 8L0 0Z" fill="rgb(255,255,255)" fill-rule="nonzero" />
+    <path id="Форма 2" d="M0 16L40 16L40 24L0 24L0 16Z" fill="rgb(213,43,30)" fill-rule="nonzero" />
+    <path id="Форма 3" d="M0 8L40 8L40 16L0 16L0 8Z" fill="rgb(0,57,166)" fill-rule="nonzero" />
+</svg>

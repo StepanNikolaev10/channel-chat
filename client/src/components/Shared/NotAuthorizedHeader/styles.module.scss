@@ -9,6 +9,9 @@ $font: Arial, Helvetica, sans-serif;
     box-shadow: 0 5px 11px -1px rgba(0, 0, 0, 0.16);
     display: flex;
     padding: 0 1.5rem;
+    position: relative;
+    z-index: 10;
+    overflow: visible;
 }
 
 .section {

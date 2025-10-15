@@ -98,6 +98,10 @@ $font: Arial;
     overflow-y: auto;
 }
 
+.formTagsList:has(:only-child) {
+    gap: 0;
+}
+
 .settingAddBtn {
     width: 120px;
     height: 35px;

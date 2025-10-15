@@ -2,12 +2,14 @@ import styles from './styles.module.scss';
 import ChannelsService from '../../../../services/ChannelsService.js';
 import UserState from '../../../../state/UserState.js';
 import Router from '../../../../Router/index.js';
+import LangState from '../../../../state/LangState.js';
 
 class ChannelSettingsMenu extends HTMLElement {
 
     constructor() {
         super();
         this.eventListeners = [];
+        this.langUnsubscribe = null;
         this.channelData = {};
     }
 
@@ -18,6 +20,7 @@ class ChannelSettingsMenu extends HTMLElement {
 
     disconnectedCallback() {
         this.removeEvents();
+        if (this.langUnsubscribe) this.langUnsubscribe();
     }
 
     setupStyles() {
@@ -35,15 +38,15 @@ class ChannelSettingsMenu extends HTMLElement {
                 <form class="${styles.form}" data-role="form">
                     <div class="${styles.formColumn}">
                         <div class="${styles.formRow}">
-                            <label class="${styles.formLabel}" for="change-name-input">Change name</label>
+                            <label class="${styles.formLabel}" data-role="change-name-input-label" for="change-name-input">Change name</label>
                             <input class="${styles.formInput}" data-role="change-name-input" type="text" id="change-name-input" placeholder="Enter new name here..." />
                         </div>
                         <div class="${styles.formRow}">
-                            <label class="${styles.formLabel}" for="change-description-input">Change description</label>
+                            <label class="${styles.formLabel}" data-role="change-description-input-label" for="change-description-input">Change description</label>
                             <input class="${styles.formInput}" data-role="change-description-input" type="text" id="change-description-input" placeholder="Enter new description here..." />
                         </div>
                         <div class="${styles.formRow}">
-                            <div class="${styles.formLabel}">Change tags:</div>
+                            <div class="${styles.formLabel}" data-role="change-tags-input-label">Change tags:</div>
                             <div class="${styles.formTagsList}" data-role="form-tag-list">
                                 <button class="${styles.settingAddBtn}" data-role="add-tags-btn" type="button">Add</button>
                             </div>
@@ -65,6 +68,10 @@ class ChannelSettingsMenu extends HTMLElement {
         this.channelData = channelData;
         this.renderContent(channelData.tags, channelData.type);
         this.attachEvents();
+        this.langUnsubscribe = LangState.subscribe((newLang) => {
+            this.updateLanguage(newLang);
+        });
+        this.updateLanguage(LangState.language);
     }
 
     updateContent(channelData) {
@@ -75,7 +82,6 @@ class ChannelSettingsMenu extends HTMLElement {
     }
 
     renderContent(tags, type) {
-        // tags
         const tagList = this.querySelector('[data-role="form-tag-list"]');
         tagList.innerHTML = `<button class="${styles.settingAddBtn}" data-role="add-tags-btn" type="button">Add</button>`;
         for (const tag of tags) {
@@ -93,7 +99,6 @@ class ChannelSettingsMenu extends HTMLElement {
             tagList.insertBefore(tagEl, tagList.lastElementChild);
         }
         
-        // channelType
         if (type === 'closed') {
             const formColumn = this.querySelector(`.${styles.formColumn}`);
             const formRow = document.createElement('div');
@@ -101,7 +106,8 @@ class ChannelSettingsMenu extends HTMLElement {
 
             const formLabel = document.createElement('div');
             formLabel.classList.add(styles.formLabel);
-            formLabel.textContent = 'Change password'
+            formInput.dataset.role = 'change-password-input-label';
+            formLabel.textContent = 'Change password';
             
             const formInput = document.createElement('input');
             formInput.classList.add(styles.formInput);
@@ -112,24 +118,66 @@ class ChannelSettingsMenu extends HTMLElement {
             formRow.append(formLabel, formInput);
             formColumn.insertBefore(formRow, formColumn.lastElementChild);
         }
+    }
 
+    updateLanguage(lang) {
+        const title = this.querySelector(`.${styles.title}`);
+        const nameLabel = this.querySelector('[data-role="change-name-input-label"]');
+        const nameInput = this.querySelector('[data-role="change-name-input"]');
+        const descLabel = this.querySelector('[data-role="change-description-input-label"]');
+        const descInput = this.querySelector('[data-role="change-description-input"]');
+        const tagsLabel = this.querySelector('[data-role="change-tags-input-label"]');
+        const addBtn = this.querySelector('[data-role="add-tags-btn"]');
+        const deleteBtn = this.querySelector('[data-role="delete-channel-btn"]');
+        const cancelBtn = this.querySelector('[data-role="cancel-btn"]');
+        const saveBtn = this.querySelector('[data-role="save-btn"]');
+        const passwordLabel = this.querySelector('[data-role="change-password-input-label"]');
+        const passwordInput = this.querySelector('[data-role="change-password-input"]');
+        if (lang === 'en'){
+            title.textContent = 'Channel settings';
+            nameLabel.textContent = 'Change name';
+            nameInput.placeholder = 'Enter new name here...';
+            descLabel.textContent = 'Change description';
+            descInput.placeholder = 'Enter new description here...';
+            tagsLabel.textContent = 'Change tags:';
+            addBtn.textContent = 'Add';
+            deleteBtn.textContent = 'Delete channel';
+            cancelBtn.textContent = 'Cancel';
+            saveBtn.textContent = 'Save';
+            if(this.channelData.type === 'closed') {
+                passwordLabel.textContent = 'Change password';
+                passwordInput.placeholder = 'Enter new password here...';
+            }
+        } else if (lang === 'ru') {
+            title.textContent = 'Настройки канала';
+            nameLabel.textContent = 'Сменить имя';
+            nameInput.placeholder = 'Веедите новое имя...';
+            descLabel.textContent = 'Сменить описание';
+            descInput.placeholder = 'Введите новое описание...';
+            tagsLabel.textContent = 'Сменить теги:';
+            addBtn.textContent = 'Добавить';
+            deleteBtn.textContent = 'Удалить канал';
+            cancelBtn.textContent = 'Отмена';
+            saveBtn.textContent = 'Сохранить';
+            if(this.channelData.type === 'closed') {
+                passwordLabel.textContent = 'Сменить пароль';
+                passwordInput.placeholder = 'Введите новый пароль...';
+            }
+        }
     }
 
     attachEvents() {
         // tag btns
         const tags = this.querySelectorAll(`.${styles.tag}`);
         tags.forEach(tag => {
-            // delete tag event
-            const deleteTag = () => {
-                tag.remove();
-            }
+            const deleteTag = () => tag.remove();
             this.addEvent(tag, 'click', deleteTag);
         });
 
         // add tags btn
         const addTagsBtn = this.querySelector('[data-role="add-tags-btn"]');
         const openTagSelectorModal = () => {
-            const tags = Array.from(this.querySelectorAll(`.${styles.tag}`)).map(tag => tag = tag.dataset.role);
+            const tags = Array.from(this.querySelectorAll(`.${styles.tag}`)).map(tag => tag.dataset.role);
             this.dispatchEvent(new CustomEvent('open-tag-selector-modal', {
                 detail: tags,
                 bubbles: true,
@@ -154,53 +202,39 @@ class ChannelSettingsMenu extends HTMLElement {
 
         // cancel btn
         const cancelBtn = this.querySelector('[data-role="cancel-btn"]');
-        const closeSearchMenu = () => {
+        const closeMenu = () => {
             this.dispatchEvent(new CustomEvent('close-channel-settings-menu', {
                 bubbles: true,
                 composed: true
             }));
         }
-        this.addEvent(cancelBtn, 'click', closeSearchMenu);
+        this.addEvent(cancelBtn, 'click', closeMenu);
 
-        // submit form
+        // form
         const form = this.querySelector('[data-role="form"]');
         const submitForm = async (event) => {
             event.preventDefault();
             try {
                 const name = this.querySelector('[data-role="change-name-input"]').value.trim();
-                const oldName = this.channelData.name;
                 const description = this.querySelector('[data-role="change-description-input"]').value.trim();
-                const oldDescription = this.channelData.description;
-                const tags = Array.from(this.querySelectorAll(`.${styles.tag}`)).map(tag => tag = tag.dataset.role);
-                const oldTags = this.channelData.tags;
+                const tags = Array.from(this.querySelectorAll(`.${styles.tag}`)).map(tag => tag.dataset.role);
                 const type = this.channelData.type;
-                let password = null;
+                let password = type === 'closed' ? this.querySelector('[data-role="change-password-input"]').value.trim() : null;
 
-                let isTagArraysSame = tags.length === oldTags.length && tags.every((tag, i) => tag === oldTags[i]);
+                const channelData = { name, type, description, tags };
+                if (password) channelData.password = password;
 
-                if((!name || name === oldName) && (!description || description === oldDescription) && isTagArraysSame && !password) {
-                    this.dispatchEvent(new CustomEvent('close-channel-settings-menu', {
+                const updatedChannelData = await ChannelsService.editChannel(UserState.connectedChannelInfo.channelId, channelData);
+
+                if(updatedChannelData) {
+                    this.dispatchEvent(new CustomEvent('update-channel-data', {
+                        detail: { updatedChannelData },
                         bubbles: true,
                         composed: true
                     }));
-                } else {
-                    const channelData = { name, type, description, tags };
-                    if (type === 'closed') {
-                        password = this.querySelector('[data-role="change-password-input"]').value.trim();
-                        channelData.password = password;
-                    }
-                    const updatedChannelData = await ChannelsService.editChannel(UserState.connectedChannelInfo.channelId, channelData);
-
-                    if(updatedChannelData) {
-                        this.dispatchEvent(new CustomEvent('update-channel-data', {
-                            detail: { updatedChannelData },
-                            bubbles: true,
-                            composed: true
-                        }));
-                    }
                 }
             } catch(e) {
-                console.error(e)
+                console.error(e);
             }
         }
         this.addEvent(form, 'submit', submitForm);
@@ -229,7 +263,6 @@ class ChannelSettingsMenu extends HTMLElement {
             customElements.define('channel-settings-menu', ChannelSettingsMenu);
         }
     }
-    
 }
 
 export default ChannelSettingsMenu;

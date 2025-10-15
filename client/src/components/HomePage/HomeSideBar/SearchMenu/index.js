@@ -1,11 +1,12 @@
 import styles from './styles.module.scss';
 import ChannelsService from '../../../../services/ChannelsService.js';
+import LangState from '../../../../state/LangState.js';
 
 class SearchMenu extends HTMLElement {
-
     constructor() {
         super();
-        this.eventListeners = []; 
+        this.eventListeners = [];
+        this.langUnsubscribe = null;
         this.selectedTags = [];
     }
 
@@ -13,10 +14,15 @@ class SearchMenu extends HTMLElement {
         this.setupStyles();
         this.render();
         this.attachEvents();
+        this.langUnsubscribe = LangState.subscribe((newLang) => {
+            this.updateLanguage(newLang);
+        });
+        this.updateLanguage(LangState.language);
     }
 
     disconnectedCallback() {
         this.removeEvents();
+        if (this.langUnsubscribe) this.langUnsubscribe();
     }
 
     setupStyles() {
@@ -29,15 +35,15 @@ class SearchMenu extends HTMLElement {
         this.innerHTML = `
             <div class="${styles.container}">
                 <div class="${styles.header}">
-                    <div class="${styles.title}">Enter details</div>
+                    <div class="${styles.title}" data-role="title">Enter details</div>
                 </div>
                 <form class="${styles.form}" data-role="form">
                     <div class="${styles.formRow}">
-                        <label class="${styles.formLabel}" for="nameInput">Search by name</label>
-                        <input class="${styles.formInput}" data-role="form-input" type="text" id="nameInput" placeholder="Enter name here..." />
+                        <label class="${styles.formLabel}" data-role="search-by-name-label" for="name-input">Search by name</label>
+                        <input class="${styles.formInput}" data-role="form-input" type="text" id="name-input" placeholder="Enter name here..." />
                     </div>
                     <div class="${styles.formRow}">
-                        <div class="${styles.formLabel}">Filter by tags:</div>
+                        <div class="${styles.formLabel}" data-role="filter-label">Filter by tags:</div>
                         <ul class="${styles.formTagsList}">
                             <li class="${styles.tag}" data-tag-type="Art">Art</li>
                             <li class="${styles.tag}" data-tag-type="Books">Books</li>
@@ -70,13 +76,52 @@ class SearchMenu extends HTMLElement {
         `;
     }
 
-    addEvent(element, eventType, handler) {
-        this.eventListeners.push({ element, eventType, handler });
-        element.addEventListener(eventType, handler);
+    updateLanguage(lang) {
+        const title = this.querySelector('[data-role="title"]');
+        const searchByNameLabel = this.querySelector('[data-role="search-by-name-label"]');
+        const formInput = this.querySelector('[data-role="form-input"]');
+        const filterLabel = this.querySelector('[data-role="filter-label"]');
+        const cancelBtn = this.querySelector('[data-role="cancel-btn"]');
+        const continueBtn = this.querySelector('[data-role="continue-btn"]');
+        const tags = Array.from(this.querySelectorAll(`.${styles.tag}`));
+
+        if (lang === 'en') {
+            title.textContent = 'Enter details';
+            searchByNameLabel.textContent = 'Search by name';
+            formInput.placeholder = 'Enter name here...';
+            filterLabel.textContent = 'Filter by tags:';
+            cancelBtn.textContent = 'Cancel';
+            continueBtn.textContent = 'Continue';
+
+            const enTags = {
+                Art: 'Art', Books: 'Books', Chatting: 'Chatting', Cooking: 'Cooking',
+                Education: 'Education', Esports: 'Esports', Fitness: 'Fitness', Friends: 'Friends',
+                Gaming: 'Gaming', Hobbies: 'Hobbies', Humor: 'Humor', Movies: 'Movies',
+                Music: 'Music', News: 'News', Podcasts: 'Podcasts', Programming: 'Programming',
+                Sports: 'Sports', Technology: 'Technology', Travel: 'Travel', Work: 'Work'
+            };
+            tags.forEach(tag => tag.textContent = enTags[tag.dataset.tagType] || tag.dataset.tagType);
+
+        } else if (lang === 'ru') {
+            title.textContent = 'Введите данные';
+            searchByNameLabel.textContent = 'Поиск по имени';
+            formInput.placeholder = 'Введите имя...';
+            filterLabel.textContent = 'Фильтр по тегам:';
+            cancelBtn.textContent = 'Отмена';
+            continueBtn.textContent = 'Продолжить';
+
+            const ruTags = {
+                Art: 'Искусство', Books: 'Книги', Chatting: 'Чат', Cooking: 'Кулинария',
+                Education: 'Образование', Esports: 'Киберспорт', Fitness: 'Фитнес', Friends: 'Друзья',
+                Gaming: 'Игры', Hobbies: 'Хобби', Humor: 'Юмор', Movies: 'Фильмы',
+                Music: 'Музыка', News: 'Новости', Podcasts: 'Подкасты', Programming: 'Кодинг',
+                Sports: 'Спорт', Technology: 'Технологии', Travel: 'Путешествия', Work: 'Работа'
+            };
+            tags.forEach(tag => tag.textContent = ruTags[tag.dataset.tagType] || tag.dataset.tagType);
+        }
     }
 
     attachEvents() {
-        // tag buttons
         const tags = Array.from(this.querySelectorAll(`.${styles.tag}`));
         for(const tag of tags) {
             const selectSearchTag = () => {
@@ -92,7 +137,6 @@ class SearchMenu extends HTMLElement {
             this.addEvent(tag, 'click', selectSearchTag);
         }
 
-        // cancel button
         const cancelBtn = this.querySelector('[data-role="cancel-btn"]');
         const closeSearchMenu = () => {
             this.dispatchEvent(new CustomEvent('close-search-menu', {
@@ -102,25 +146,20 @@ class SearchMenu extends HTMLElement {
         }
         this.addEvent(cancelBtn, 'click', closeSearchMenu);
 
-        // submit form
         const form = this.querySelector('[data-role="form"]');
         const submitForm = async (event) => {
-
             event.preventDefault();
             try {
                 const name = this.querySelector('[data-role="form-input"]').value.trim();
-                const selectedTags = this.selectedTags;
-                let searchParamsCounter = selectedTags.length;
-                if(name !== '') {
-                    searchParamsCounter += 1;
-                }
+                let searchParamsCounter = this.selectedTags.length;
+                if(name !== '') searchParamsCounter += 1;
                 if(searchParamsCounter <= 0) {
                     this.dispatchEvent(new CustomEvent('empty-search-response', {
                         bubbles: true,
                         composed: true
                     }));
                 } else {
-                    const response = await ChannelsService.getSearchedChannels({ name, selectedTags });
+                    const response = await ChannelsService.getSearchedChannels({ name, selectedTags: this.selectedTags });
                     this.dispatchEvent(new CustomEvent('search-response', {
                         detail: { response, searchParamsCounter },
                         bubbles: true,
@@ -128,11 +167,15 @@ class SearchMenu extends HTMLElement {
                     }));
                 }
             } catch(e) {
-                console.error(e)
+                console.error(e);
             }
         }
         this.addEvent(form, 'submit', submitForm);
+    }
 
+    addEvent(element, eventType, handler) {
+        this.eventListeners.push({ element, eventType, handler });
+        element.addEventListener(eventType, handler);
     }
 
     removeEvents() {
@@ -145,13 +188,10 @@ class SearchMenu extends HTMLElement {
     clearSearchSelectors() {
         const input = this.querySelector('[data-role="form-input"]');
         input.value = '';
-        
         this.selectedTags = [];
         const tags = Array.from(this.querySelectorAll(`.${styles.tag}`));
         for(const tag of tags) {
-            if(tag.classList.contains(styles.selected)) {
-                tag.classList.remove(styles.selected);
-            }
+            if(tag.classList.contains(styles.selected)) tag.classList.remove(styles.selected);
         }
     }
 
@@ -160,7 +200,6 @@ class SearchMenu extends HTMLElement {
             customElements.define('search-menu', SearchMenu);
         }
     }
-    
 }
 
 export default SearchMenu;

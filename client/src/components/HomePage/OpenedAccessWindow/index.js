@@ -3,21 +3,28 @@ import Router from '../../../Router/index.js';
 import ChannelsService from '../../../services/ChannelsService.js';
 import UserState from '../../../state/UserState.js';
 import WebSocketService from '../../../services/WebSocketService.js';
+import LangState from '../../../state/LangState';
 
 class OpenedAccessWindow extends HTMLElement {
     constructor() {
         super();
         this.eventListeners = [];
+        this.langUnsubscribe = null;
     }
 
     connectedCallback() {
         this.setupStyles();
         this.render();
         this.attachEvents();
+        this.langUnsubscribe = LangState.subscribe((newLang) => {
+            this.updateLanguage(newLang);
+        });
+        this.updateLanguage(LangState.language);
     }
 
     disconnectedCallback() {
         this.removeEvents();
+        if (this.langUnsubscribe) this.langUnsubscribe();
     }
 
     setupStyles() {
@@ -29,7 +36,7 @@ class OpenedAccessWindow extends HTMLElement {
             <div class="${styles.container}">
                 <div class="${styles.content}">
                     <p class="${styles.title}">
-                        This is an open channel. Click "Join сhannel" to enter.
+                        This is an open channel. Click "Join channel" to enter.
                     </p>
                 </div>
                 <div class="${styles.actions}">
@@ -40,6 +47,22 @@ class OpenedAccessWindow extends HTMLElement {
         `;
     }
 
+    updateLanguage(lang) {
+        const title = this.querySelector(`.${styles.title}`);
+        const backToHomeBtn = this.querySelector('[data-role="back-to-home-btn"]');
+        const joinChannelBtn = this.querySelector('[data-role="join-channel-btn"]');
+
+        if (lang === 'en') {
+            title.textContent = 'This is an open channel. Click "Join channel" to enter.';
+            backToHomeBtn.textContent = 'Back to home';
+            joinChannelBtn.textContent = 'Join channel';
+        } else if (lang === 'ru') {
+            title.textContent = 'Это открытый канал. Нажмите «Присоединиться», чтобы войти.';
+            backToHomeBtn.textContent = 'На главную';
+            joinChannelBtn.textContent = 'Присоединиться';
+        }
+    }
+
     attachEvents() {
         // back to home btn
         const backToHomeBtn = this.querySelector('[data-role="back-to-home-btn"]');
@@ -48,7 +71,7 @@ class OpenedAccessWindow extends HTMLElement {
                 bubbles: true,
                 composed: true
             }));
-        }
+        };
         this.addEvent(backToHomeBtn, 'click', backToHome);
 
         // join channel btn
@@ -63,16 +86,13 @@ class OpenedAccessWindow extends HTMLElement {
                 await ChannelsService.joinChannel({ id, type: 'opened' });
                 UserState.connectedChannelInfo.channelId = id; 
                 UserState.connectedChannelInfo.channelName = name;
-                // It's important that the channel data in UserState is updated before rendering,
-                // so the component can retrieve the necessary information about the channel by its id.
                 await WebSocketService.connectToSocket(id);
                 Router.init();
-            } catch(e) {
+            } catch (e) {
                 console.error('Failed to join channel:', e);
             }
-        }
+        };
         this.addEvent(joinChannelBtn, 'click', joinChannel);
-
     }
 
     addEvent(element, eventType, handler) {
@@ -92,7 +112,6 @@ class OpenedAccessWindow extends HTMLElement {
             customElements.define('opened-access-window', OpenedAccessWindow);
         }
     }
-
 }
 
 export default OpenedAccessWindow;

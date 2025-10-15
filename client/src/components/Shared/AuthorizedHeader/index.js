@@ -21,7 +21,7 @@ class AuthorizedHeader extends HTMLElement {
     }
 
     setupStyles() {
-        this.style.zIndex = '1000';
+        this.style.zIndex = '1001';
     }
 
     render() {

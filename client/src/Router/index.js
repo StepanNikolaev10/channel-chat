@@ -53,7 +53,6 @@ class Router {
         }
     }
 
-    // Основная логика роутинга и редиректов
     async init() {
 
         if (!AuthState.isChecked) {
@@ -66,8 +65,6 @@ class Router {
                 });
             });
         }
-    
-        // Проверки при запуске приложения
 
         if (!AuthState.isAuthenticated) {
             let currentPath = window.location.pathname;
@@ -96,7 +93,6 @@ class Router {
             } else {
                 const path = `/chat/${UserState.connectedChannelInfo.channelId}`;
                 const { pageTagName, params } = this.getRoute(path);
-                // await this.connectToSocket(UserState.connectedChannelInfo.channelId);
                 window.history.replaceState({}, "", path);
                 this.renderPage(pageTagName, params);
             }
@@ -105,7 +101,6 @@ class Router {
 
     }
 
-    // Навигация по приложению
     navigate(path) {
         window.history.pushState({}, "", path);
         this.init();

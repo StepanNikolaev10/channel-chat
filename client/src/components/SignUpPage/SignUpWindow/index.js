@@ -3,21 +3,28 @@ import Router from '../../../Router/index.js';
 import AuthService from '../../../services/AuthService.js';
 import AuthState from '../../../state/AuthState.js';
 import UserState from '../../../state/UserState.js';
+import LangState from '../../../state/LangState.js';
 
 class SignUpWindow extends HTMLElement {
     constructor() {
         super();
         this.eventListeners = [];
+        this.langUnsubscribe = null;
     }
 
     connectedCallback() {
         this.setupStyles();
         this.render();
         this.attachEvents();
+        this.langUnsubscribe = LangState.subscribe((newLang) => {
+            this.updateLanguage(newLang);
+        });
+        this.updateLanguage(LangState.language);
     }
 
     disconnectedCallback() {
         this.removeEvents();
+        if (this.langUnsubscribe) this.langUnsubscribe();
     }
 
     setupStyles() {
@@ -36,11 +43,12 @@ class SignUpWindow extends HTMLElement {
                             <input class="${styles.input}" data-role="password-input" type="text" placeholder="Password" autocomplete="password"></input>
                             <input class="${styles.input}" data-role="confirm-password-input" type="text" placeholder="Confirm password"></input>
                         </div>
-                        <div class="${styles.formActions}" data-role="sign-up-btn">
-                            <button class="${styles.signUpBtn}" data-role="sign-up-btn" type="submit">Sign up</button>
-                            <div class="${styles.signInLinkText}">
-                                Already signed up?<a class="${styles.signInLink}" data-role="sign-in-link">Sign in</a>
-                            </div>
+                        <div class="${styles.formActions}">
+                            <button class="${styles.signInBtn}" data-role="sign-up-btn" type="submit">Sign up</button>
+                                <div class="${styles.linkContainer}">
+                                    <span class="${styles.signInLinkText}">Already signed up?</span>
+                                    <a class="${styles.signInLink}" data-role="sign-in-link">Sign in</a>
+                                </div>
                         </div>
                     </form>
                 </div>
@@ -48,9 +56,29 @@ class SignUpWindow extends HTMLElement {
         `;
     }
 
-    addEvent(element, eventType, handler) {
-        this.eventListeners.push({ element, eventType, handler });
-        element.addEventListener(eventType, handler);
+    updateLanguage(lang) {
+        const title = this.querySelector(`.${styles.title}`);
+        const usernameInput = this.querySelector('[data-role="username-input"]');
+        const passwordInput = this.querySelector('[data-role="password-input"]');
+        const signUpBtn = this.querySelector('[data-role="sign-up-btn"]');
+        const signInLinkText = this.querySelector(`.${styles.signInLinkText}`);
+        const signInLink = this.querySelector('[data-role="sign-in-link"]');
+
+        if (lang === 'en') {
+            title.textContent = 'Sign in to Channel Chat';
+            usernameInput.placeholder = 'Username';
+            passwordInput.placeholder = 'Password';
+            signUpBtn.textContent = 'Sign up';
+            signInLinkText.textContent = 'Already signed up?';
+            signInLink.textContent = 'Sign in';
+        } else if (lang === 'ru') {
+            title.textContent = 'Вход в приложение';
+            usernameInput.placeholder = 'Юзернейм';
+            passwordInput.placeholder = 'Пароль';
+            signUpBtn.textContent = 'Зарегестрироваться';
+            signInLinkText.textContent = 'Уже зарегестрированы?';
+            signInLink.textContent = 'Войти';
+        }
     }
 
     attachEvents() {
@@ -80,6 +108,11 @@ class SignUpWindow extends HTMLElement {
             }
         }
         this.addEvent(form, 'submit', formHandler);
+    }
+
+    addEvent(element, eventType, handler) {
+        this.eventListeners.push({ element, eventType, handler });
+        element.addEventListener(eventType, handler);
     }
 
     removeEvents() {

@@ -2,22 +2,29 @@ import styles from './styles.module.scss';
 import ChannelsService from '../../../services/ChannelsService.js';  
 import UserState from '../../../state/UserState.js';
 import WebSocketClient from '../../../WebSocketClient/index.js';
+import LangState from '../../../state/LangState.js';
 
 class ChatWindow extends HTMLElement {
     constructor() {
         super();
         this.eventListeners = [];
         this._isSubscribedToSocket = false;
+        this.langUnsubscribe = null;
     }
 
     connectedCallback() {
         this.setupStyles();
         this.render();
         this.initChat();
+        this.langUnsubscribe = LangState.subscribe((newLang) => {
+            this.updateLanguage(newLang);
+        });
+        this.updateLanguage(LangState.language);
     }
 
     disconnectedCallback() {
         this.removeEvents();
+        if (this.langUnsubscribe) this.langUnsubscribe();
     }
 
     setupStyles() {
@@ -36,6 +43,20 @@ class ChatWindow extends HTMLElement {
         `;
     }
 
+    updateLanguage(lang) {
+        const input = this.querySelector('[data-role="message-input"]');
+        const sendBtn = this.querySelector('[data-role="send-btn"]');
+        if (!input || !sendBtn) return;
+
+        if (lang === 'en') {
+            input.placeholder = 'Type your message...';
+            sendBtn.textContent = 'Send';
+        } else if (lang === 'ru') {
+            input.placeholder = 'Введите сообщение...';
+            sendBtn.textContent = 'Отправить';
+        }
+    }
+
     async initChat() {
         try {
             await this.loadMessages();
@@ -47,7 +68,6 @@ class ChatWindow extends HTMLElement {
     }
 
     attachEvents() {
-        // general
         const sendMessage = async () => {
             const input = this.querySelector('[data-role="message-input"]');
             const text = input.value.trim();
@@ -65,11 +85,9 @@ class ChatWindow extends HTMLElement {
             input.value = '';
         }
         
-        // send btn 
         const sendBtn = this.querySelector('[data-role="send-btn"]');
         this.addEvent(sendBtn, 'click', sendMessage);
 
-        // input enter
         const input = this.querySelector('[data-role="message-input"]');
         this.addEvent(input, 'keydown', (e) => {
             if (e.key === 'Enter') {

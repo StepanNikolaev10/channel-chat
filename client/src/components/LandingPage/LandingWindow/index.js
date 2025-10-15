@@ -1,21 +1,28 @@
 import styles from './styles.module.scss';
 import Router from '../../../Router/index.js';
+import LangState from '../../../state/LangState.js';
 
 class LandingWindow extends HTMLElement {
     
     constructor() {
         super();
         this.eventListeners = [];
+        this.langUnsubscribe = null;
     }
 
     connectedCallback() {
         this.setupStyles();
         this.render();
         this.attachEvents();
+        this.langUnsubscribe = LangState.subscribe((newLang) => {
+            this.updateLanguage(newLang);
+        });
+        this.updateLanguage(LangState.language);
     }
 
     disconnectedCallback() {
         this.removeEvents();
+        if (this.langUnsubscribe) this.langUnsubscribe();
     }
 
     setupStyles() {
@@ -32,12 +39,31 @@ class LandingWindow extends HTMLElement {
                         <div class="${styles.title}">To start chatting, please log in or register</div>
                     </div>
                     <div class="${styles.buttonsContainer}">
-                        <button class="${styles.signInButton}" data-role="sign-in-btn">Sign in</button>
-                        <button class="${styles.signUpButton}" data-role="sign-up-btn">Sign up</button>
+                        <button class="${styles.signInBtn}" data-role="sign-in-btn">Sign in</button>
+                        <button class="${styles.signUpBtn}" data-role="sign-up-btn">Sign up</button>
                     </div>
                 </div>
             </div>
         `;
+    }
+
+    updateLanguage(lang) {
+        const greetings = this.querySelector(`.${styles.greetings}`);
+        const title = this.querySelector(`.${styles.title}`);
+        const signInBtn = this.querySelector(`.${styles.signInBtn}`);
+        const signUpBtn = this.querySelector(`.${styles.signUpBtn}`);
+
+        if (lang === 'en') {
+            greetings.textContent = 'Welcome!';
+            title.textContent = 'To start chatting, please log in or register';
+            signInBtn.textContent = 'Sign in';
+            signUpBtn.textContent = 'Sign Up';
+        } else if (lang === 'ru') {
+            greetings.textContent = 'Добро пожаловать!';
+            title.textContent = 'Чтобы начать общаться, войдите или зарегистрируйтесь';
+            signInBtn.textContent = 'Войти';
+            signUpBtn.textContent = 'Регистрация';
+        }
     }
 
     addEvent(element, eventType, handler) {
