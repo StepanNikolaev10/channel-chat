@@ -140,11 +140,11 @@ $font: Arial, Helvetica, sans-serif;
     }
 
     .main .tagsList {
-        gap: 10px;
+        gap: 5px;
     }
 
     .main .tag {
-        font-size: 14px;
+        font-size: 12px;
         padding: 7px 2px;
     }
 
@@ -156,8 +156,8 @@ $font: Arial, Helvetica, sans-serif;
 }
 
 @media (max-width: 360px) {
-   .container {
-        width: 90%;
+    .container {
+        width: 95%;
         padding: 0 0.5rem;
     }
 
@@ -170,8 +170,8 @@ $font: Arial, Helvetica, sans-serif;
     }
 
     .main .tag {
-        font-size: 14px;
-        padding: 7px 2px;
+        font-size: 12px;
+        padding: 7px 0;
     }
 
     .footer .cancelBtn,

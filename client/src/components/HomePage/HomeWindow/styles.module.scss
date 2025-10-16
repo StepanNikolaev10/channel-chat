@@ -52,11 +52,12 @@ $font: Arial, Helvetica, sans-serif;
         background-color: $third-color-hover;
     }
 }
+
 @media (max-width: 360px) {
     .button {
         width: 160px;
-        height: 70px;
-        font-size: 18px;
+        height: 60px;
+        font-size: 16px;
         border-radius: 16px;
     }
 }

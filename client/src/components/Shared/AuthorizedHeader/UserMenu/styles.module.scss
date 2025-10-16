@@ -93,3 +93,9 @@ $fourth-color: #555555;
         padding: 10px 15px;
     }
 }
+
+@media (max-width: 360px) {
+    .dropdownToggleBtn {
+        font-size: 18px;
+    }
+}

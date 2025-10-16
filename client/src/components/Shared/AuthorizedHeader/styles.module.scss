@@ -112,13 +112,14 @@ $font: Arial, Helvetica, sans-serif;
         padding: 0 0.5rem;
     }
 
-    .app-name {
-        font-size: 24px;
+    .sectionCenter {
+        flex: 4;
     }
 
-    .sectionCenter {
-        display: none;
+    .app-name {
+        font-size: 22px;
     }
+
 }
 
 
