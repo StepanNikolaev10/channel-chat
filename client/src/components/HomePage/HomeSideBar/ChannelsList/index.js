@@ -49,9 +49,10 @@ class ChannelsList extends HTMLElement {
                 </div>
                 <ul class="${styles.channels}" data-role="channels"></ul>
                 <div class="${styles.btnContainer}" data-role="btn-container">
-                    <div class="${styles.searchBtn}" data-role="search-btn">Search
+                    <div class="${styles.searchBtn}" data-role="search-btn">
+                        <span class="${styles.searchBtnText}" data-role="search-btn-text"></span>
                         <div class="${styles.searchParamsCounter}" data-role="search-params-counter"></div>
-                    </div>
+                    </span>
                 </div>
             </div>
         `;
@@ -74,17 +75,17 @@ class ChannelsList extends HTMLElement {
         const title = this.querySelector(`.${styles.title}`);
         const closedChannels = this.querySelectorAll(`.${styles.closedChannel}`);
         const openedChannels = this.querySelectorAll(`.${styles.openedChannel}`);
-        const searchBtn = this.querySelector('[data-role="search-btn"]');
+        const searchBtnText = this.querySelector(`.${styles.searchBtnText}`);
 
         if (lang === 'en') {
             title.textContent = 'Channels';
-            searchBtn.textContent = 'Search';
             closedChannels.forEach(closedChannel => {
                 closedChannel.textContent = 'Closed';
             });
             openedChannels.forEach(openedChannel => {
                 openedChannel.textContent = 'Opened';
             });
+            searchBtnText.textContent = 'Search';
         } else if (lang === 'ru') {
             title.textContent = 'Каналы';
             closedChannels.forEach(closedChannel => {
@@ -93,7 +94,7 @@ class ChannelsList extends HTMLElement {
             openedChannels.forEach(openedChannel => {
                 openedChannel.textContent = 'Открытый';
             });
-            searchBtn.textContent = 'Найти';
+            searchBtnText.textContent = 'Поиск';
         }
     }
 
@@ -227,27 +228,20 @@ class ChannelsList extends HTMLElement {
             }
             this.addEvent(stopSearchBtn, 'click',  stopSearch);
         }
-
         const searchParamsCounterEl = this.querySelector('[data-role="search-params-counter"]');
-        if(searchParamsCounterEl) {
-            searchParamsCounterEl.textContent = searchParamsCounter;
-            searchParamsCounterEl.classList.add(styles.visible);
-        }
+        searchParamsCounterEl.textContent = searchParamsCounter;
+        searchParamsCounterEl.classList.add(styles.visible);
     }
 
     stopSearchMode() {
         this.renderChannels(this.channels);
 
         const stopSearchBtn = this.querySelector(`.${styles.stopSearchBtn}`);
-        if(stopSearchBtn) {
-            this.removeEvent(stopSearchBtn);
-            stopSearchBtn.remove();
-        }
+        this.removeEvent(stopSearchBtn);
+        stopSearchBtn.remove();
 
         const searchParamsCounterEl = this.querySelector('[data-role="search-params-counter"]');
-        if(searchParamsCounterEl) {
-            searchParamsCounterEl.classList.remove(styles.visible)
-        }
+        searchParamsCounterEl.classList.remove(styles.visible)
     }
 
     static define() {

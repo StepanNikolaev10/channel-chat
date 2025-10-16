@@ -170,8 +170,6 @@ $font: Arial, Helvetica, sans-serif;
     position: relative;
     border-radius: 10px;
     background: $third-color;
-    color: $second-color;
-    font-family: $font;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -181,6 +179,11 @@ $font: Arial, Helvetica, sans-serif;
     &:hover {
         background: $third-color-hover;
     }
+}
+
+.searchBtnText {
+    color: $second-color;
+    font-family: $font;
 }
 
 .searchParamsCounter {
@@ -197,6 +200,8 @@ $font: Arial, Helvetica, sans-serif;
     font-size: 14px;
     padding-right: 1px;
     visibility: hidden;
+    color: $second-color;
+    font: $font;
 }
 
 .visible {
