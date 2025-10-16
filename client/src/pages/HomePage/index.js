@@ -111,9 +111,6 @@ class HomePage extends HTMLElement {
             if(this.isMobile()) {
                 authorizedHeader.loadMobileContent();
                 homeSideBar.style.position = 'absolute';
-                if(!homeSideBar.classList.contains(styles.hidden)) {
-                    homeSideBar.classList.add(styles.hidden)
-                }
             } else {
                 authorizedHeader.loadDesktopContent();
                 homeSideBar.style.position = 'relative';
